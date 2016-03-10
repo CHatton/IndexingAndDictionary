@@ -3,8 +3,11 @@ package gmit;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +21,7 @@ public class MyIndex implements Index {
 
 	public MyIndex(String pathToFile, String pathToDictionary, String pathToIgnoreWords) {
 		try {
-			wordCount = 0;
+			wordCount = 0; // document starts with 0 words
 			pages = 0;// initiall have 0 pages
 			populateIgnoreWords(pathToIgnoreWords); // fill up the set of words to ignore
 			this.dictionary = new Dictionary(pathToDictionary); // create the dictionary with the file provided
@@ -56,23 +59,17 @@ public class MyIndex implements Index {
 				if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
 					// it's a letter we want to form a word with
 					currentWord.append(ch);
-
 				} else {
-
 					String word = currentWord.toString().toUpperCase();
 					if (!ignoreWords.contains(word) && dictionary.contains(word)) {
-						wordCount++;
 						addToIndex(word); // add the word to the index
 					}
 					currentWord = new StringBuilder(); // onto next word
 				}
-
-				if (i == next.length() - 1) {
-					// the newline character is swallowed by readline, so the last word of one line would join with the first of the next
+				if (i == next.length() - 1) { // the newline character is swallowed by readline, so the last word of one line would join with the first of the next
 					wordCount++;
 					String word = currentWord.toString().toUpperCase();
 					if (!ignoreWords.contains(word) && dictionary.contains(word)) {
-
 						addToIndex(word); // add the word to the index
 					}
 					currentWord = new StringBuilder();
@@ -121,13 +118,27 @@ public class MyIndex implements Index {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		ArrayList<Integer> list;
 		for (Map.Entry<String, Set<Integer>> entry : index.entrySet()) {
+			list = new ArrayList<Integer>(entry.getValue());
+			Collections.sort(list); // display sorted order of pages instead of random order
 			// iterate through the index giving information about each entry
 			sb.append("================================================================================\n");
 			sb.append("WORD: " + entry.getKey() + "\nDEFINITIONS: " + dictionary.getDetail(entry.getKey()) + "\nPAGES: "
-					+ entry.getValue() + "\n\n");
+					+ list + "\n\n");
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public List<String> getDefinitions(String word) {
+
+		if (index.containsKey(word.toUpperCase())) { // word is in index
+			return dictionary.getDetail(word.toUpperCase()).getDefinition();
+		} else { // word not in index
+		
+			return new ArrayList<String>();
+		}
 	}
 
 }

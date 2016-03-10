@@ -89,4 +89,9 @@ public class FileDocument implements Document {
 		System.out.println(index);
 	}
 
+	@Override
+	public List<String> getDefinitions(String word) {
+		return index.getDefinitions(word);
+	}
+
 }
