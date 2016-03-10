@@ -10,7 +10,7 @@ import java.util.Map;
 public class Dictionary {
 	private Map<String, WordDetail> dictionary = new HashMap<>();
 	// maps a words to Word details, which contains a list of strings
-	
+
 	public Dictionary(String pathToFile) {
 
 		try {
@@ -30,17 +30,19 @@ public class Dictionary {
 					// null check for last line in the file
 
 					// once we're here we've built up a full definition
-					addToDictionary(word, newDefinition.toString());
+					addToDictionary(word.toUpperCase(), newDefinition.toString());
+					// upper case to make everything that's added case insensitive
 					newDefinition = new StringBuilder(); // clear string
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("There was an error creating the dictionary from " + pathToFile +", please make sure the file is there.");
+			System.out.println("There was an error creating the dictionary from " + pathToFile
+					+ ", please make sure the file is there.");
 		}
 	} // constructor
-	
-	public boolean contains(String s){
-		return dictionary.containsKey(s);
+
+	public boolean contains(String s) {
+		return dictionary.containsKey(s.toUpperCase());
 	}
 
 	private void addToDictionary(String wordToAdd, String definitions) {
@@ -56,12 +58,12 @@ public class Dictionary {
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("The dictionary contains " + dictionary.size() +" Words.");
+		sb.append("The dictionary contains " + dictionary.size() + " Words.");
 		return sb.toString();
 	}
-	
+
 	public WordDetail getDetail(String word) {
 		return dictionary.get(word);
 	}

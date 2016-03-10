@@ -19,7 +19,7 @@ public class WordDetail {
 
 	@Override
 	public String toString(){
-		return ""+definitions;
+		return definitions.toString();
 	}
 	
 }
