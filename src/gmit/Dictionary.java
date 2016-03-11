@@ -5,10 +5,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Dictionary {
-	private Map<String, WordDetail> dictionary = new HashMap<>();
+	private Map<String, List<String>> dictionary = new HashMap<>();
 	// maps a words to Word details, which contains a list of strings
 
 	public Dictionary(String pathToFile) {
@@ -49,11 +50,11 @@ public class Dictionary {
 		if (dictionary.get(wordToAdd) == null) {
 			ArrayList<String> newList = new ArrayList<>(); // make a new list because the word doesn't exist yet
 			newList.add(definitions); // add the definition to the list
-			WordDetail w = new WordDetail(newList); // create a word detail with the 1 item list
-			dictionary.put(wordToAdd, w); // put it in the dictionary
+			//WordDetail w = new WordDetail(newList); // create a word detail with the 1 item list
+			dictionary.put(wordToAdd, newList); // put it in the dictionary
 		} else { // if we're here, then the item already has an entry
 			// we want to get the entry, and update it
-			dictionary.get(wordToAdd).addEntry(definitions); // add the new definition to the existing list
+			dictionary.get(wordToAdd).add(definitions); // add the new definition to the existing list
 		}
 	}
 
@@ -64,7 +65,7 @@ public class Dictionary {
 		return sb.toString();
 	}
 
-	public WordDetail getDetail(String word) {
+	public List<String> getDetail(String word) {
 		return dictionary.get(word);
 	}
 } // class

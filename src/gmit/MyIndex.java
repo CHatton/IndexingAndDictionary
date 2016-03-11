@@ -95,7 +95,7 @@ public class MyIndex implements Index {
 	@Override
 	public List<String> getDefinitions(String word) {
 		if (index.containsKey(word.toUpperCase())) { // word is in index
-			return dictionary.getDetail(word.toUpperCase()).getDefinition();
+			return dictionary.getDetail(word.toUpperCase());
 		} else { // word not in index
 			return new ArrayList<String>();
 		}
