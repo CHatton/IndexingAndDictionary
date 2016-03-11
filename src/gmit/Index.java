@@ -8,5 +8,5 @@ public interface Index {
 	boolean contains(String word); // says whether or not the word is in the index
 	int getPages(); // number of pages in the index
 	int getWordCount(); // number of words in the document
-	List<String> getDefinitions(String word);
+	List<String> getDefinitions(String word); // give all the definitions for a given word
 }

@@ -1,19 +1,20 @@
 package gmit;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 public class IndexTest {
 
 	@Test
 	public void generateIndexTest() {
-		Index index = new MyIndex("indextest.dat", "dictionary.csv", "stopwords.txt");
-		assertFalse(index.contains("all")); // on the stop list
-		assertTrue(index.contains("refinement")); // should be in index
-		assertFalse(index.contains("Belgae")); // in text but not in dictionary
-		assertTrue(index.contains("inHabIt")); // case insensitive
-		assertEquals(8,index.getWordCount()); // number of unique words in index
+		long before = System.currentTimeMillis();
+		Document deBelloGallico = new FileDocument("DeBelloGallico.txt", "dictionary.csv", "stopwords.txt");
+		long after = System.currentTimeMillis();
+		System.out.println("Took " + (after - before) + " ms to create the document");
+
+		//deBelloGallico.printIndex();
+		//System.out.println(deBelloGallico.getDefinitions("Adopt"));
+		System.out.println(deBelloGallico.pageNums("adopt"));
+		
 	}
 
 }

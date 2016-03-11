@@ -12,7 +12,6 @@ public class Dictionary {
 	// maps a words to Word details, which contains a list of strings
 
 	public Dictionary(String pathToFile) {
-
 		try {
 			// give the path to a dictionary file and it creates the map
 			BufferedReader reader = new BufferedReader(new FileReader(pathToFile));
@@ -35,6 +34,7 @@ public class Dictionary {
 					newDefinition = new StringBuilder(); // clear string
 				}
 			}
+			reader.close();
 		} catch (IOException e) {
 			System.out.println("There was an error creating the dictionary from " + pathToFile
 					+ ", please make sure the file is there.");
@@ -60,7 +60,7 @@ public class Dictionary {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("The dictionary contains " + dictionary.size() + " Words.");
+		sb.append("The dictionary contains " + dictionary.size() + " words.");
 		return sb.toString();
 	}
 

@@ -10,5 +10,6 @@ public interface Document {
 	int wordCount();// gives back the total unique word count of the document
 	void printSinglePage(int page);// prints a single page from the document
 	void printIndex();// print out the index
-	List<String> getDefinitions(String word);
+	List<String> getDefinitions(String word); 
+	// gives back the definitions for a given word if it's in the document's index
 }

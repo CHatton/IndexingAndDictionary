@@ -1,8 +1,5 @@
 package gmit;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,75 +16,40 @@ public class MyIndex implements Index {
 	private int pages; // number of pages in the document
 	private int wordCount; // number of words in the document
 
-	public MyIndex(String pathToFile, String pathToDictionary, String pathToIgnoreWords) {
-		try {
-			wordCount = 0; // document starts with 0 words
-			pages = 0;// initiall have 0 pages
-			populateIgnoreWords(pathToIgnoreWords); // fill up the set of words to ignore
-			this.dictionary = new Dictionary(pathToDictionary); // create the dictionary with the file provided
-			generateIndex(pathToFile); // create the index using dictionary and ignore words
-		} catch (IOException e) {
-			System.out.println("There was an error creating the index for the file.");
-		}
+	public MyIndex(Dictionary dictionary, Set<String> ignoreWords, List<String> fileContents) {
+		this.dictionary = dictionary;
+		this.ignoreWords = ignoreWords;
+		generateIndex(fileContents); // each String is a page
 	}
 
-	private void populateIgnoreWords(String pathToIgnoreWords) throws IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(pathToIgnoreWords));
-		String next;
-		while ((next = reader.readLine()) != null) {
-			ignoreWords.add(next.toUpperCase());
-			// add each line of the file as a word to ignore and not add to the index
-		}
-		reader.close();
-	}
-
-	private void generateIndex(String pathToFile) throws IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(pathToFile));
-		StringBuilder currentWord = new StringBuilder(); // keeps track of each word
-
-		// page goes up every 40 lines
-		int lineCount = 0;
-		String next = reader.readLine();
-		while (next != null) {
-			lineCount++; // one more line
-			if (lineCount == 40) {
-				pages++;// one next page for every 40 lines
-				lineCount = 0; // reset the line count
-			}
-			for (int i = 0; i < next.length(); i++) {
-				char ch = next.charAt(i);
+	private void generateIndex(List<String> fileContents) {
+		StringBuilder currentWord = new StringBuilder();
+		for (int page = 0; page < fileContents.size(); page++) {
+			// go through every page in the document
+			for (int i = 0; i < fileContents.get(page).length(); i++) {
+				// go through string contents of each page
+				char ch = fileContents.get(page).charAt(i); // current character we're on
 				if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
 					// it's a letter we want to form a word with
 					currentWord.append(ch);
 				} else {
 					String word = currentWord.toString().toUpperCase();
 					if (!ignoreWords.contains(word) && dictionary.contains(word)) {
-						addToIndex(word); // add the word to the index
+						addToIndex(word, page + 1); // add the word to the index
 					}
 					currentWord = new StringBuilder(); // onto next word
 				}
-				if (i == next.length() - 1) { // the newline character is swallowed by readline, so the last word of one line would join with the first of the next
-					wordCount++;
-					String word = currentWord.toString().toUpperCase();
-					if (!ignoreWords.contains(word) && dictionary.contains(word)) {
-						addToIndex(word); // add the word to the index
-					}
-					currentWord = new StringBuilder();
-				}
 			}
-			next = reader.readLine(); // move onto next line
-		}
-		//System.out.println(ignoreWords);
-		reader.close();
-	}
+		} // for every page
+	} // generate index
 
-	private void addToIndex(String word) {
+	private void addToIndex(String word, int page) {
 		if (index.get(word) == null) { // the word isn't in the index
 			Set<Integer> pageNumbers = new HashSet<>(); // create a new set of integers
-			pageNumbers.add(pages); // pages is the current page we're on
+			pageNumbers.add(page); // pages is the current page we're on
 			index.put(word, pageNumbers);
 		} else { // other wise we want to add the page number to the existing list
-			index.get(word).add(pages);
+			index.get(word).add(page);
 		}
 	}
 
@@ -132,11 +94,9 @@ public class MyIndex implements Index {
 
 	@Override
 	public List<String> getDefinitions(String word) {
-
 		if (index.containsKey(word.toUpperCase())) { // word is in index
 			return dictionary.getDetail(word.toUpperCase()).getDefinition();
 		} else { // word not in index
-		
 			return new ArrayList<String>();
 		}
 	}

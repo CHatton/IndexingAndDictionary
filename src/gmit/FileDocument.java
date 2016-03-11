@@ -5,7 +5,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FileDocument implements Document {
 	//private File file;
@@ -13,33 +15,51 @@ public class FileDocument implements Document {
 	Index index; // the document's index
 
 	public FileDocument(String pathToFile, String pathToDictionary, String pathToIgnoreWords) {
-		// give the path to the file, and it creates a document from the file given
-		this.index = new MyIndex(pathToFile, pathToDictionary, pathToIgnoreWords);
-		fillContents(pathToFile); // fill up nested lists with contents from file
+		try {
+			// give the path to the file, and it creates a document from the file given
+			Dictionary d = new Dictionary(pathToDictionary);
+			Set<String> ignoreWords = populateIgnoreWords(pathToIgnoreWords);
+			fillContents(pathToFile); // fill document contents from file
+			index = new MyIndex(d, ignoreWords, fileContents); // create index with dictionary, ignore words and fileContents
+		} catch (IOException e) {
+			System.out.println("There was an error creating the document.");
+			System.out.println("Please check for the following files: ");
+			System.out.println(pathToFile + ", " + pathToDictionary + ", " + pathToIgnoreWords);
+		} // if there's an error with one of the files
+
 	}
 
-	private void fillContents(String pathToFile) {
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(pathToFile));
-			StringBuilder page = new StringBuilder(); // represents a full page
-			String next;
-			int pos = 0;
-
-			while ((next = reader.readLine()) != null) {
-
-				for (int i = 0; i < 40; i++) {
-					if (next != null) { // don't want to add nulls to end of text
-						page.append(next + "\n");
-					}
-					next = reader.readLine();
-				}
-				fileContents.add(page.toString());
-				page = new StringBuilder();
-			}
-			reader.close();
-		} catch (IOException e) {
-			System.out.println("There was an error reading in the file from " + pathToFile);
+	private Set<String> populateIgnoreWords(String pathToIgnoreWords) throws IOException {
+		Set<String> ignoreWords = new HashSet<>();
+		BufferedReader reader = new BufferedReader(new FileReader(pathToIgnoreWords));
+		String next;
+		while ((next = reader.readLine()) != null) {
+			ignoreWords.add(next.toUpperCase());
+			// add each line of the file as a word to ignore and not add to the index
 		}
+		reader.close();
+		return ignoreWords;
+	}
+
+	private void fillContents(String pathToFile) throws IOException {
+
+		BufferedReader reader = new BufferedReader(new FileReader(pathToFile));
+		StringBuilder page = new StringBuilder(); // represents a full page
+		String next;
+		int pos = 0;
+
+		while ((next = reader.readLine()) != null) {
+
+			for (int i = 0; i < 40; i++) {
+				if (next != null) { // don't want to add nulls to end of text
+					page.append(next + "\n");
+				}
+				next = reader.readLine();
+			}
+			fileContents.add(page.toString());
+			page = new StringBuilder();
+		}
+		reader.close();
 	}
 
 	@Override
@@ -53,10 +73,15 @@ public class FileDocument implements Document {
 			System.out.println(fileContents.get(i)); // each string is a page
 		}
 	}
+	
+	@Override
+	public void printSinglePage(int page) {
+		System.out.println(fileContents.get(page - 1));
+	}
 
 	@Override
 	public List<Integer> pageNums(String word) {
-		List<Integer> pageNumbers = new ArrayList<>(index.pageNums(word));
+		List<Integer> pageNumbers = new ArrayList<>(index.pageNums(word.toUpperCase()));
 		Collections.sort(pageNumbers);
 		return pageNumbers;
 	}
@@ -79,10 +104,7 @@ public class FileDocument implements Document {
 		return sb.toString();
 	}
 
-	@Override
-	public void printSinglePage(int page) {
-		System.out.println(fileContents.get(page - 1));
-	}
+
 
 	@Override
 	public void printIndex() {
