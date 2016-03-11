@@ -12,5 +12,4 @@ public interface Document {
 	void printIndex();// print out the index
 	List<String> getDefinitions(String word); // gives back the definitions for a given word if it's in the document's index
 	void printAllPagesWith(String word); // prints all pages with that word
-	
 }

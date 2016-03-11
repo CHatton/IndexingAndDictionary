@@ -13,8 +13,7 @@ public class MyIndex implements Index {
 	private Set<String> ignoreWords = new HashSet<>(); // words that should NOT be included in the index
 	private Dictionary dictionary; // dictionary used to create the index
 	private Map<String, Set<Integer>> index = new HashMap<>(); // a list of words to list of pages they are on
-	private int pages; // number of pages in the document
-	private int wordCount; // number of words in the document
+	private int wordCount = 0; // number of words in the document
 
 	public MyIndex(Dictionary dictionary, Set<String> ignoreWords, List<String> fileContents) {
 		this.dictionary = dictionary;
@@ -33,6 +32,7 @@ public class MyIndex implements Index {
 					// it's a letter we want to form a word with
 					currentWord.append(ch);
 				} else {
+					wordCount++;
 					String word = currentWord.toString().toUpperCase();
 					if (!ignoreWords.contains(word) && dictionary.contains(word)) {
 						addToIndex(word, page + 1); // add the word to the index
@@ -70,11 +70,6 @@ public class MyIndex implements Index {
 	@Override
 	public int getWordCount() {
 		return wordCount; // number of words in document
-	}
-
-	@Override
-	public int getPages() {
-		return pages; // number of pages in document
 	}
 
 	@Override

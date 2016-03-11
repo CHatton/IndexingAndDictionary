@@ -10,10 +10,13 @@ import java.util.Map;
 
 public class Dictionary {
 	private Map<String, List<String>> dictionary = new HashMap<>();
-	// maps a words to Word details, which contains a list of strings
+	// maps a words to list of definitions
 
-	public Dictionary(String pathToFile) {
-		try {
+	public Dictionary(){
+		this.dictionary = new HashMap<String, List<String>>(); // give back empty dictionary
+	} // to be used if the there is an I/O error
+	
+	public Dictionary(String pathToFile) throws IOException{
 			// give the path to a dictionary file and it creates the map
 			BufferedReader reader = new BufferedReader(new FileReader(pathToFile));
 			StringBuilder newDefinition = new StringBuilder();
@@ -36,11 +39,7 @@ public class Dictionary {
 				}
 			}
 			reader.close();
-		} catch (IOException e) {
-			System.out.println("There was an error creating the dictionary from " + pathToFile
-					+ ", please make sure the file is there.");
-		}
-	} // constructor
+	} // main constructor
 
 	public boolean contains(String s) {
 		return dictionary.containsKey(s.toUpperCase());
@@ -50,7 +49,6 @@ public class Dictionary {
 		if (dictionary.get(wordToAdd) == null) {
 			ArrayList<String> newList = new ArrayList<>(); // make a new list because the word doesn't exist yet
 			newList.add(definitions); // add the definition to the list
-			//WordDetail w = new WordDetail(newList); // create a word detail with the 1 item list
 			dictionary.put(wordToAdd, newList); // put it in the dictionary
 		} else { // if we're here, then the item already has an entry
 			// we want to get the entry, and update it

@@ -14,16 +14,27 @@ public class FileDocument implements Document {
 	private Index index; // the document's index
 
 	public FileDocument(String pathToFile, String pathToDictionary, String pathToIgnoreWords) {
+		Dictionary d; // dictionary that will be used to create index
 		try {
-			Dictionary d = new Dictionary(pathToDictionary); // creates dictionary from given path
-			Set<String> ignoreWords = populateIgnoreWords(pathToIgnoreWords); // creates list of words to ignore
-			fillContents(pathToFile); // fill document contents from file
-			index = new MyIndex(d, ignoreWords, fileContents); // create index with dictionary, ignore words and fileContents
+			d = new Dictionary(pathToDictionary); // creates dictionary from given path
 		} catch (IOException e) {
-			System.out.println("There was an error creating the document.");
-			System.out.println("Please check for the following files: ");
-			System.out.println(pathToFile + ", " + pathToDictionary + ", " + pathToIgnoreWords);
+			System.err.println("Warning: The document has a blank dictionary - check file '" + pathToDictionary + "'");
+			d = new Dictionary(); // use an empty one if there is a problem loading it from the file
+		}
+		Set<String> ignoreWords;
+		try {
+			ignoreWords = populateIgnoreWords(pathToIgnoreWords); // creates list of words to ignore
+		} catch (IOException e) {
+			System.err.println("Warning: The stoplist for the index is blank - check file '" + pathToIgnoreWords + "'");
+			ignoreWords = new HashSet<>(); // default to empty if there's a problem reading from the file
+		}
+		try {
+			fillContents(pathToFile); // fill document contents from file
+		} catch (IOException e) {
+			System.err.println("Warning: There was an error reading from the e-book - check file '" + pathToFile + "'");
+			fileContents = new ArrayList<>();
 		} // if there's an error with one or more of the files
+		index = new MyIndex(d, ignoreWords, fileContents); // create index with dictionary, ignore words and fileContents
 	} // constructor
 
 	private Set<String> populateIgnoreWords(String pathToIgnoreWords) throws IOException {
@@ -59,13 +70,13 @@ public class FileDocument implements Document {
 
 	@Override
 	public int pageCount() {
-		return index.getPages(); // total number of pages in the document
+		return fileContents.size(); // total number of pages in the document
 	}
 
 	@Override
 	public void printFullDocument() {
 		for (int i = 0; i < fileContents.size(); i++) {
-			System.out.println(fileContents.get(i)); // each string is a page
+			printSinglePage(i + 1); // print every individual page
 		}
 	}
 
@@ -74,12 +85,11 @@ public class FileDocument implements Document {
 		if (page < 1 || page > fileContents.size()) { // prevent invalid option		
 			System.out.println("Invalid page number. Please enter between 1 and " + fileContents.size());
 		} else { // valid page number
-			
+
 			System.out.println("PAGE: " + page);
-			System.out.println("===========================================================");
+			System.out.println("========================================================================");
 			System.out.println(fileContents.get(page - 1)); // page -1 so user enters 1 for index 0 etc
-			System.out.println("===========================================================");
-			
+			System.out.println("========================================================================");
 		}
 	}
 
@@ -120,10 +130,9 @@ public class FileDocument implements Document {
 
 	@Override
 	public void printAllPagesWith(String word) {
-		
 		List<Integer> pageNumbers = pageNums(word);
 		// get list of pages word is on
-		for(Integer page: pageNumbers){
+		for (Integer page : pageNumbers) {
 			printSinglePage(page); // print out all of them
 		}
 	}

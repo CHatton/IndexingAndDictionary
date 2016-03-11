@@ -9,6 +9,9 @@ public class DocumentRunner {
 		System.out.println("Took " + (after - before) + " ms to create the document");
 
 		//d.printAllPagesWith("continually");
-		d.printSinglePage(5);
+		//d.printSinglePage(5);
+		//d.printFullDocument();
+		System.out.println(d);
+		//d.printIndex();
 	}
 }
