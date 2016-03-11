@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 public class FileDocument implements Document {
-	//private File file;
 	List<String> fileContents = new ArrayList<>(); // entire file in nested list format
 	Index index; // the document's index
 
