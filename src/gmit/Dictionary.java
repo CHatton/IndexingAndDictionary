@@ -12,33 +12,33 @@ public class Dictionary {
 	private Map<String, List<String>> dictionary = new HashMap<>();
 	// maps a words to list of definitions
 
-	public Dictionary(){
+	public Dictionary() {
 		this.dictionary = new HashMap<String, List<String>>(); // give back empty dictionary
 	} // to be used if the there is an I/O error
-	
-	public Dictionary(String pathToFile) throws IOException{
-			// give the path to a dictionary file and it creates the map
-			BufferedReader reader = new BufferedReader(new FileReader(pathToFile));
-			StringBuilder newDefinition = new StringBuilder();
-			reader.readLine(); // don't want first line
-			String next = reader.readLine(); // hold each line of text
 
-			while (next != null) { // until we hit the end of the file
-				if (next.charAt(0) == '"') { // then we've hit the start of a new word
-					String word = next.substring(1, next.indexOf('"', 1)); // get the word of the current definition
-					do {
-						newDefinition.append(next + "\n"); // add the current line onto the multi-line definition
-						next = reader.readLine(); // move onto next one
-					} while (next != null && next.charAt(0) != '"');
-					// null check for last line in the file
+	public Dictionary(String pathToFile) throws IOException {
+		// give the path to a dictionary file and it creates the map
+		BufferedReader reader = new BufferedReader(new FileReader(pathToFile));
+		StringBuilder newDefinition = new StringBuilder();
+		reader.readLine(); // don't want first line
+		String next = reader.readLine(); // hold each line of text
 
-					// once we're here we've built up a full definition
-					addToDictionary(word.toUpperCase(), newDefinition.toString());
-					// upper case to make everything that's added case insensitive
-					newDefinition = new StringBuilder(); // clear string
-				}
+		while (next != null) { // until we hit the end of the file
+			if (next.charAt(0) == '"') { // then we've hit the start of a new word
+				String word = next.substring(1, next.indexOf('"', 1)); // get the word of the current definition
+				do {
+					newDefinition.append(next + "\n"); // add the current line onto the multi-line definition
+					next = reader.readLine(); // move onto next one
+				} while (next != null && next.charAt(0) != '"');
+				// null check for last line in the file
+
+				// once we're here we've built up a full definition
+				addToDictionary(word.toUpperCase(), newDefinition.toString());
+				// upper case to make everything that's added case insensitive
+				newDefinition = new StringBuilder(); // clear string
 			}
-			reader.close();
+		}
+		reader.close();
 	} // main constructor
 
 	public boolean contains(String s) {

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class MyIndex implements Index {
-
+	private Set<String> invalidWords = new HashSet<>(); // words that weren't in dictionary and/or were in ignoreWords
 	private Set<String> ignoreWords = new HashSet<>(); // words that should NOT be included in the index
 	private Dictionary dictionary; // dictionary used to create the index
 	private Map<String, Set<Integer>> index = new HashMap<>(); // a list of words to list of pages they are on
@@ -28,14 +28,27 @@ public class MyIndex implements Index {
 			for (int i = 0; i < fileContents.get(page).length(); i++) {
 				// go through string contents of each page
 				char ch = fileContents.get(page).charAt(i); // current character we're on
-				if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
+				if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '\'') {
 					// it's a letter we want to form a word with
 					currentWord.append(ch);
 				} else {
 					wordCount++;
 					String word = currentWord.toString().toUpperCase();
+
+					// cut off commas in the cases that there is one at both ends, one at the start, or one at the end
+					// commas before the last character are okay
+					if (word.length() > 0 && word.charAt(0) == '\'' && word.charAt(word.length() - 2) == '\'') {
+						word = word.substring(1, word.length() - 1); // cut off first and last
+					} else if (word.length() > 0 && word.charAt(0) == '\'') {
+						word = word.substring(1); // cut off first
+					} else if (word.length() > 2 && word.charAt(word.length() - 2) == '\'') {
+						word = word.substring(0, word.length() - 1); // cut off last
+					}
+
 					if (!ignoreWords.contains(word) && dictionary.contains(word)) {
 						addToIndex(word, page + 1); // add the word to the index
+					} else {
+						invalidWords.add(word); // add word to set of invalid words
 					}
 					currentWord = new StringBuilder(); // onto next word
 				}
@@ -94,6 +107,11 @@ public class MyIndex implements Index {
 		} else { // word not in index
 			return new ArrayList<String>();
 		}
+	}
+
+	@Override
+	public Set<String> getInvalidWords() {
+		return invalidWords;
 	}
 
 }

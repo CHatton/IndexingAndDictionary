@@ -4,12 +4,26 @@ import java.util.List;
 
 public interface Document {
 	int pageCount();// gives the number of pages in the document
+
+	void printPageRange(int from, int to);
+
 	void printFullDocument();// prints the full document
+
 	List<Integer> pageNums(String word);// gives back the list of page the word is on
+
 	boolean contains(String word);// says whether or not the word exists in the document
+
 	int wordCount();// gives back the total unique word count of the document
+
 	void printSinglePage(int page);// prints a single page from the document
+
 	void printIndex();// print out the index
+
 	List<String> getDefinitions(String word); // gives back the definitions for a given word if it's in the document's index
+
 	void printAllPagesWith(String word); // prints all pages with that word
+
+	List<Integer> pageNumbersFor(String word); // give back all the page numbers that word appears on
+
+	List<String> getInvalidWords();
 }

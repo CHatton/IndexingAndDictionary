@@ -137,4 +137,27 @@ public class FileDocument implements Document {
 		}
 	}
 
+	@Override
+	public List<Integer> pageNumbersFor(String word) {
+		Set<Integer> pageNumsSet = index.pageNums(word.toUpperCase()); // get the set of pages
+		List<Integer> pageNumsList = new ArrayList<>(pageNumsSet); // turn it into a list
+		Collections.sort(pageNumsList); // sort it
+		return pageNumsList; // return it
+
+	}
+
+	@Override
+	public List<String> getInvalidWords() {
+		List<String> invalidWords = new ArrayList<>(index.getInvalidWords());
+		Collections.sort(invalidWords);
+		return invalidWords;
+	}
+
+	@Override
+	public void printPageRange(int from, int to) {
+		for(int i = from; i < to; i++){
+			printSinglePage(i);
+		}
+	}
+
 }
