@@ -22,3 +22,18 @@ returns the number of words in the document, it includes all words NOT in the in
 # String singlePage(int page)
 returns the 40 line page as a string
 
+# String getIndex()
+returns the entire contents of the index as a string. 
+This includes each word, its definitions and the page numbers that word appears on (in sorted order).
+
+# List<String> getDefinitions(String word)
+this method returns a list of defintions assosiated with the given word, if that word doesn't exist, an empty list will be returned.
+
+# String allPagesWith(String word)
+this method returns a string which is the concatenation of all pages that contain the given word.
+
+# List<String> getInvalidWords()
+this method returns a list of strings with the words that were found in the text, but were not in the dictionary, or which did appear in the stopwords list.
+
+#List<String> didYouMean(String word)
+this method gives back a list of words that are similar to the given word.
