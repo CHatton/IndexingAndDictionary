@@ -5,9 +5,9 @@ import java.util.List;
 public interface Document {
 	int pageCount();// gives the number of pages in the document
 
-	void printPageRange(int from, int to);
+	String pageRange(int from, int to);
 
-	void printFullDocument();// prints the full document
+	String fullDocument();// prints the full document
 
 	List<Integer> pageNums(String word);// gives back the list of page the word is on
 
@@ -15,15 +15,17 @@ public interface Document {
 
 	int wordCount();// gives back the total unique word count of the document
 
-	void printSinglePage(int page);// prints a single page from the document
+	String singlePage(int page);// prints a single page from the document
 
-	void printIndex();// print out the index
+	String getIndex();// print out the index
 
 	List<String> getDefinitions(String word); // gives back the definitions for a given word if it's in the document's index
 
-	void printAllPagesWith(String word); // prints all pages with that word
+	String allPagesWith(String word); // prints all pages with that word
 
 	List<Integer> pageNumbersFor(String word); // give back all the page numbers that word appears on
 
-	List<String> getInvalidWords();
+	List<String> getInvalidWords(); // gives back list of words that were either not on the dictionary, or on the stop words list
+
+	List<String> didYouMean(String word); // list of words using simple recommendation system
 }

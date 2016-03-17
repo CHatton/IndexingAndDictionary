@@ -18,4 +18,6 @@ public interface Index {
 	List<String> getDefinitions(String word); // give all the definitions for a given word
 	
 	Set<String> getInvalidWords();
+	
+	List<String> didYouMean(String word);
 }

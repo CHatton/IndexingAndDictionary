@@ -9,7 +9,6 @@ public class DocumentRunner {
 
 		Document d = createDocument(); // start off with default document
 		char userChoice;
-
 		help();
 		do {
 			System.out.print("Enter Choice: ");
@@ -29,13 +28,13 @@ public class DocumentRunner {
 				System.out.println(d.getInvalidWords());
 				break;
 			case 'X':
-				System.out.println("Goodbye!");
+				System.out.println("Goodbye!"); // program will end
 				break;
 			case 'H':
 				help(); // print out available options for user
 				break;
 			case 'I':
-				d.printIndex(); // prints out the index for the document
+				System.out.println(d.getIndex()); // prints out the index for the document
 				break;
 			case 'D':
 				System.out.println(d);//.toString()
@@ -49,22 +48,40 @@ public class DocumentRunner {
 				System.out.println("Print which page?");
 				System.out.println("1 - " + d.pageCount());
 				int pageNum = console.nextInt();
-				d.printSinglePage(pageNum);
+				System.out.println(d.singlePage(pageNum));
 				break;
 			case 'R':
 				System.out.println("From Page: ");
 				int from = console.nextInt();
 				System.out.println("To Page: ");
 				int to = console.nextInt();
-				d.printPageRange(from, to);
+				System.out.println(d.pageRange(from, to));
 				// print pages between from (inclusive) and to (not inclusive)
 				break;
 			case 'F':
-				d.printFullDocument();
+				System.out.println(d.fullDocument());
 				break;
 			case 'A':
 				System.out.print("The average document creation time is: (calculating...) ");
-				System.out.println(averageDocumentCreationTime() + "ms");
+				System.out.println(averageDocumentCreationTime(100) + "ms");
+				break;
+			case 'G':
+				System.out.print("Enter word: ");
+				String givenWord = console.next();
+				System.out.println(d.allPagesWith(givenWord));
+				break;
+			case 'S':
+				System.out.print("Enter word to search for: ");
+				String searchWord = console.next();
+				if (d.contains(searchWord)) {
+					System.out.println(searchWord + " appears on pages " + d.pageNumbersFor(searchWord));
+					System.out.println("Definitions: ");
+					System.out.println(d.getDefinitions(searchWord));
+				} else {
+					System.out.println("Sorry that word isn't in the book!");
+					System.out.println("Based on your search: " + d.didYouMean(searchWord));
+					// word recommendation feature
+				}
 				break;
 			default:
 				System.out.println();
@@ -79,7 +96,7 @@ public class DocumentRunner {
 
 	public static Document createDocument() {
 		long before = System.currentTimeMillis();
-		Document d = new FileDocument("DeBelloGallico.txt", "dictionary.csv", "stopwords.txt");
+		Document d = new FileDocument("WarAndPeace-LeoTolstoy.txt", "dictionary.csv", "stopwords.txt");
 		long after = System.currentTimeMillis();
 		System.out.println("Took " + (after - before) + " ms to create the document");
 		System.out.println();
@@ -109,7 +126,6 @@ public class DocumentRunner {
 
 	public static void help() {
 		// prints out the options available to the user
-
 		System.out.println("(C)reate new document");
 		System.out.println("Use (P)remade document");
 		System.out.println("Print (I)ndex of document");
@@ -118,26 +134,24 @@ public class DocumentRunner {
 		System.out.println("Print (O)ne page");
 		System.out.println("Print (R)ange of pages");
 		System.out.println("Print (F)ull document");
+		System.out.println("Print all pages with (G)iven word");
 		System.out.println("List in(V)alid words");
-		System.out.println("Get (A)verage document creation time");
-
+		System.out.println("Calculate (A)verage document creation time");
+		System.out.println("(S)earch for a word");
 		System.out.println("(H)elp");
 		System.out.println("E(X)it");
-
 	}
 
-	public static long averageDocumentCreationTime() {
-
+	public static long averageDocumentCreationTime(int numTimes) {
 		long totalTime = 0;
-
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < numTimes; i++) {
 			long before = System.currentTimeMillis();
-			Document d = new FileDocument("DeBelloGallico.txt", "dictionary.csv", "stopwords.txt");
+			Document d = new FileDocument("WarAndPeace-LeoTolstoy.txt", "dictionary.csv", "stopwords.txt");
 			long after = System.currentTimeMillis();
 			totalTime += (after - before);
 		}
-
-		return totalTime / 100;
+		return totalTime / numTimes;
+		// creates a document 100 times and gets the average creation time
 	}
 
 }

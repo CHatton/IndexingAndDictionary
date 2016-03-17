@@ -37,11 +37,11 @@ public class MyIndex implements Index {
 
 					// cut off commas in the cases that there is one at both ends, one at the start, or one at the end
 					// commas before the last character are okay
-					if (word.length() > 0 && word.charAt(0) == '\'' && word.charAt(word.length() - 2) == '\'') {
+					if (word.length() > 2 && word.charAt(0) == '\'' && word.charAt(word.length() - 2) == '\'') {
 						word = word.substring(1, word.length() - 1); // cut off first and last
 					} else if (word.length() > 0 && word.charAt(0) == '\'') {
 						word = word.substring(1); // cut off first
-					} else if (word.length() > 2 && word.charAt(word.length() - 2) == '\'') {
+					} else if (word.length() > 2 && word.charAt(word.length() - 1) == '\'') {
 						word = word.substring(0, word.length() - 1); // cut off last
 					}
 
@@ -112,6 +112,56 @@ public class MyIndex implements Index {
 	@Override
 	public Set<String> getInvalidWords() {
 		return invalidWords;
+	}
+
+	@Override
+	public List<String> didYouMean(String word) {
+		// given a word, give a list of words that are close to the one searched for
+		List<String> wordsToReccommend = new ArrayList<>();
+		for (Map.Entry<String, Set<Integer>> entry : index.entrySet()) {
+			if (closeMatch(word.toUpperCase(), entry.getKey())) {
+				wordsToReccommend.add(entry.getKey());
+			}
+		}
+
+		return wordsToReccommend;
+	}
+
+	private boolean closeMatch(String word, String closeToThis) {
+		// returns true if the word is similar to closeToThis
+
+		if(word.length() < 3){
+			return false; // don't do it for short words
+		}
+		
+		int[] counts1 = new int[26]; // store counts for each letter in word
+		int[] counts2 = new int[26]; // store counts for each letter in closeToThis
+
+		for (int i = 0; i < word.length(); i++) {
+			char ch = word.charAt(i);
+			if(ch >= 'A' && ch <='Z'){
+				counts1[ch - 'A']++; // count them
+			}
+			
+		}
+		for (int i = 0; i < closeToThis.length(); i++) {
+			char ch = closeToThis.charAt(i);
+			if(ch >= 'A' && ch <='Z'){
+				counts2[ch - 'A']++; // count them
+			}
+			
+		}
+		int knocksAgainst = 0; // indicating differences in the words
+
+		for (int i = 0; i < 26; i++) {
+			if (counts1[i] != counts2[i]) {
+				knocksAgainst++; // if a specific letter count is not the same, one knock against the word
+			}
+		}
+
+		return knocksAgainst < 2;// mainly just to give plurals and vica versa if the other isn't in the index
+		// eg senses is not in, but sense is, continues not in, but continue is. Main intended purpose of this functionality
+		// aslo helps with a single typo, stuff like that
 	}
 
 }

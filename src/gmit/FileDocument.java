@@ -74,23 +74,26 @@ public class FileDocument implements Document {
 	}
 
 	@Override
-	public void printFullDocument() {
+	public String fullDocument() {
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < fileContents.size(); i++) {
-			printSinglePage(i + 1); // print every individual page
+			sb.append(singlePage(i + 1)); // print every individual page
 		}
+		return sb.toString();
 	}
 
 	@Override
-	public void printSinglePage(int page) {
+	public String singlePage(int page) {
+		StringBuilder sb = new StringBuilder();
 		if (page < 1 || page > fileContents.size()) { // prevent invalid option		
-			System.out.println("Invalid page number. Please enter between 1 and " + fileContents.size());
+			sb.append("Invalid page number. Please enter between 1 and " + fileContents.size());
 		} else { // valid page number
-
-			System.out.println("PAGE: " + page);
-			System.out.println("========================================================================");
-			System.out.println(fileContents.get(page - 1)); // page -1 so user enters 1 for index 0 etc
-			System.out.println("========================================================================");
+			sb.append("PAGE: " + page + "\n");
+			sb.append("========================================================================\n");
+			sb.append(fileContents.get(page - 1) + "\n"); // page -1 so user enters 1 for index 0 etc
+			sb.append("========================================================================\n");
 		}
+		return sb.toString();
 	}
 
 	@Override
@@ -119,8 +122,8 @@ public class FileDocument implements Document {
 	}
 
 	@Override
-	public void printIndex() {
-		System.out.println(index); // prints the toString from index
+	public String getIndex() {
+		return index.toString(); // prints the toString from index
 	}
 
 	@Override
@@ -129,12 +132,14 @@ public class FileDocument implements Document {
 	}
 
 	@Override
-	public void printAllPagesWith(String word) {
+	public String allPagesWith(String word) {
 		List<Integer> pageNumbers = pageNums(word);
+		StringBuilder sb = new StringBuilder();
 		// get list of pages word is on
 		for (Integer page : pageNumbers) {
-			printSinglePage(page); // print out all of them
+			sb.append(singlePage(page)); // print out all of them
 		}
+		return sb.toString();
 	}
 
 	@Override
@@ -154,10 +159,18 @@ public class FileDocument implements Document {
 	}
 
 	@Override
-	public void printPageRange(int from, int to) {
-		for(int i = from; i < to; i++){
-			printSinglePage(i);
+	public String pageRange(int from, int to) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = from; i < to; i++) {
+			sb.append(singlePage(i));
 		}
+		return sb.toString();
+	}
+
+	@Override
+	public List<String> didYouMean(String word) {
+		List<String> wordsToReccommend = index.didYouMean(word);
+		return wordsToReccommend;
 	}
 
 }
