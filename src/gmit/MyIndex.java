@@ -54,6 +54,12 @@ public class MyIndex implements Index {
 				}
 			}
 		} // for every page
+		/*
+		 * Generating the index is an O(n) operation, each line of the document
+		 * is processed and constant time operations such as adding to various
+		 * maps are performed. Only a single pass is needed to generate the
+		 * index which no words being revisted.
+		 */
 	} // generate index
 
 	private void addToIndex(String word, int page) {
@@ -64,6 +70,10 @@ public class MyIndex implements Index {
 		} else { // other wise we want to add the page number to the existing list
 			index.get(word).add(page);
 		}
+		/*
+		 * A constant time operation used in the index
+		 * creation.
+		 */
 	}
 
 	@Override
@@ -73,6 +83,7 @@ public class MyIndex implements Index {
 		} else {
 			return index.get(word); // return a list of integers indicating page numbers the word can be found
 		}
+		// constant time
 	}
 
 	@Override
@@ -98,6 +109,12 @@ public class MyIndex implements Index {
 					+ list + "\n\n");
 		}
 		return sb.toString();
+		/*
+		 * Here I convert the set into a list and then sort it.
+		 * I chose to use a set in order to avoid duplicates,
+		 * but I wanted to show the page appearances in sorted order
+		 * sorting an arraylist is a nLog(n) operation.
+		 */
 	}
 
 	@Override
@@ -107,11 +124,13 @@ public class MyIndex implements Index {
 		} else { // word not in index
 			return new ArrayList<String>();
 		}
+		// constant time operation
 	}
 
 	@Override
 	public Set<String> getInvalidWords() {
 		return invalidWords;
+		// constant time
 	}
 
 	@Override
@@ -123,6 +142,11 @@ public class MyIndex implements Index {
 				wordsToReccommend.add(entry.getKey());
 			}
 		}
+		/*
+		 * time complexiy of O(n * m) where n is the number
+		 * of keys in the map and m is the time complexity of the 
+		 * closeMatch method
+		 */
 
 		return wordsToReccommend;
 	}
@@ -130,26 +154,26 @@ public class MyIndex implements Index {
 	private boolean closeMatch(String word, String closeToThis) {
 		// returns true if the word is similar to closeToThis
 
-		if(word.length() < 3){
+		if (word.length() < 3) {
 			return false; // don't do it for short words
 		}
-		
+
 		int[] counts1 = new int[26]; // store counts for each letter in word
 		int[] counts2 = new int[26]; // store counts for each letter in closeToThis
 
 		for (int i = 0; i < word.length(); i++) {
 			char ch = word.charAt(i);
-			if(ch >= 'A' && ch <='Z'){
+			if (ch >= 'A' && ch <= 'Z') {
 				counts1[ch - 'A']++; // count them
 			}
-			
+
 		}
 		for (int i = 0; i < closeToThis.length(); i++) {
 			char ch = closeToThis.charAt(i);
-			if(ch >= 'A' && ch <='Z'){
+			if (ch >= 'A' && ch <= 'Z') {
 				counts2[ch - 'A']++; // count them
 			}
-			
+
 		}
 		int knocksAgainst = 0; // indicating differences in the words
 
@@ -159,9 +183,21 @@ public class MyIndex implements Index {
 			}
 		}
 
-		return knocksAgainst < 2;// mainly just to give plurals and vica versa if the other isn't in the index
-		// eg senses is not in, but sense is, continues not in, but continue is. Main intended purpose of this functionality
-		// aslo helps with a single typo, stuff like that
+		return knocksAgainst < 2;
+		/*
+		 * has a running time of O(3n) where n is the number of letters
+		 * in the alphabet.
+		 */
+
+		/* mainly just to give plurals and vica versa if the other isn't in the index
+		eg senses is not in, but sense is, continues not in, but continue is. Main intended purpose of this functionality
+		also helps with small typos, stuff like that */
+	}
+
+	@Override
+	public Set<String> getKeys() {
+		return dictionary.getAllWords();
+		// constant time
 	}
 
 }

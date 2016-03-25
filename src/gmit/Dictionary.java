@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Dictionary {
 	private Map<String, List<String>> dictionary = new HashMap<>();
@@ -39,6 +40,13 @@ public class Dictionary {
 			}
 		}
 		reader.close();
+		
+		/*
+		 * Construction of the dictionary map has an O(n) time complexity
+		 * where n is the size of the document, each line has to be processed
+		 * once. Each word that is added is a constant time operation O(1)
+		 */
+		
 	} // main constructor
 
 	public boolean contains(String s) {
@@ -47,12 +55,22 @@ public class Dictionary {
 
 	private void addToDictionary(String wordToAdd, String definitions) {
 		if (dictionary.get(wordToAdd) == null) {
-			ArrayList<String> newList = new ArrayList<>(); // make a new list because the word doesn't exist yet
+			List<String> newList = new ArrayList<>(); // make a new list because the word doesn't exist yet
 			newList.add(definitions); // add the definition to the list
 			dictionary.put(wordToAdd, newList); // put it in the dictionary
+			/*
+			 * Adding the definition to the new list is a constant
+			 * time operation. O(1)
+			 */
 		} else { // if we're here, then the item already has an entry
 			// we want to get the entry, and update it
 			dictionary.get(wordToAdd).add(definitions); // add the new definition to the existing list
+
+			/*
+			 * both accessing the correct list from the map
+			 * and adding a new definition to that list
+			 * are constant time operations O(1)
+			 */
 		}
 	}
 
@@ -65,5 +83,9 @@ public class Dictionary {
 
 	public List<String> getDetail(String word) {
 		return dictionary.get(word);
+	}
+
+	public Set<String> getAllWords() {
+		return dictionary.keySet(); // all words in the dictionary
 	}
 } // class

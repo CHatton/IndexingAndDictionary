@@ -10,7 +10,6 @@ public interface Index {
 	 * if a word appears on the same page twice, the page number
 	 * should just appear once
 	 */
-
 	boolean contains(String word); // says whether or not the word is in the index
 
 	int getWordCount(); // number of words in the document
@@ -20,4 +19,6 @@ public interface Index {
 	Set<String> getInvalidWords();
 	
 	List<String> didYouMean(String word);
+	
+	Set<String> getKeys();
 }
