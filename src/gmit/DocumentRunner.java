@@ -1,15 +1,20 @@
 package gmit;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Scanner;
 import java.util.Set;
 
 public class DocumentRunner {
+
 	public static Scanner console = new Scanner(System.in);
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
+		Document doc = createUrlDocument("http://www.nytimes.com/", "dictionary.csv", "stopwords.txt");
+		//Document doc = new FileDocument("WarAndPeace-LeoTolstoy.txt", "dictionary.csv", "stopwords.txt");
 		System.out.println("Using premade document - War and Peace");
-		Document doc = createDocument(); // start off with default war and peace document
+		// Document doc = createDocument(); // start off with default war and
+		// peace document
 		int userChoice;
 		System.out.println(help());
 		do {
@@ -26,7 +31,7 @@ public class DocumentRunner {
 				// lets user create custom document
 				break;
 			case 3:
-				System.out.println(doc);//.toString()
+				System.out.println(doc);// .toString()
 				break;
 			case 4:
 				System.out.println(doc.fullDocument());
@@ -48,13 +53,15 @@ public class DocumentRunner {
 					System.out.println("To Page: ");
 					int to = console.nextInt();
 					System.out.println(doc.pageRange(from, to));
-					// print pages between from (inclusive) and to (not inclusive)
+					// print pages between from (inclusive) and to (not
+					// inclusive)
 				} else {
 					System.out.println("Invalid document, please create a valid one, or use premade!");
 				}
 				break;
 			case 7:
-				System.out.println(doc.getIndex()); // prints out the index for the document
+				System.out.println(doc.getIndex()); // prints out the index for
+													// the document
 				break;
 			case 8:
 				System.out.print("Enter word: ");
@@ -110,11 +117,13 @@ public class DocumentRunner {
 						+ doc.loosePhraseSearch(looseSearchPhrase));
 				break;
 			case 14:
-				System.out.println(help()); // print out available options for user
+				System.out.println(help()); // print out available options for
+											// user
 				break;
 			case 15:
 				System.out.println(detailedHelp());
 				break;
+
 			case 16:
 				Document doc1 = createDocument(); // war and peace
 				Document doc2 = createDocument("DeBelloGallico.txt", "dictionary.csv", "stopwords.txt");
@@ -124,12 +133,16 @@ public class DocumentRunner {
 						+ " words - Press any key to continue ");
 				console.nextLine();
 				console.nextLine();
-				iterateThroughCollection(overLapping); // print one per line instead of using default toString method
+				iterateThroughCollection(overLapping);
+				// print one per line instead of using default toString method
 				break;
 			case 17:
 				System.out.print("The average document creation time is: (calculating...) ");
 				System.out.println(averageDocumentCreationTime(50) + "ms");
 				break;
+			case 18:
+				doc = urlCreation();
+
 			case -1:
 				System.out.println("Goodbye!"); // program will end
 				break;
@@ -139,6 +152,7 @@ public class DocumentRunner {
 				break;
 			}
 		} while (userChoice != -1);
+
 	} // main
 
 	public static String help() {
@@ -166,6 +180,8 @@ public class DocumentRunner {
 		sb.append("===== Demonstration =====\n");
 		sb.append("16) Overlapping words between 2 documents\n");
 		sb.append("17) Calculate average document creation time (War and Peace)\n");
+		sb.append("===== URL Document =====\n");
+		sb.append("18) Create a URL Document\n");
 		sb.append("===== Exit =====\n");
 		sb.append("-1) Exit\n");
 		return sb.toString();
@@ -264,9 +280,56 @@ public class DocumentRunner {
 
 	}
 
+	public static Document urlCreation() {
+		System.out.println("Pick a defauly url or pick your own.");
+		System.out.println("Don't forget to include the protocol eg 'http://'");
+		int choice;
+		String customUrl;
+		String customDictionary;
+		String customStopwords;
+
+		System.out.println("Enter URL (-1 to quit)");
+		System.out.println("1) Enter custom URL: ");
+		System.out.println("2) use premade: http://www.huffingtonpost.co.uk/");
+		System.out.println("3) use premade: http://news.yahoo.com/ ");
+		System.out.println("4) use premade: http://www.nytimes.com/");
+
+		choice = console.nextInt();
+		switch (choice) {
+		case 1:
+			customUrl = console.next();
+			System.out.print("Enter dictionary (recommended 'dictionary.csv'): ");
+			customDictionary = console.next();
+			System.out.print("Enter stop words (recommended 'stopwords.txt'): ");
+			customStopwords = console.next();
+			createUrlDocument(customUrl, customDictionary, customStopwords);
+			break;
+		case 2:
+			System.out.println("Creating document using http://www.huffingtonpost.co.uk/)");
+			return createUrlDocument("http://www.huffingtonpost.co.uk/", "dictionary.csv", "stopwords.txt");
+		case 3:
+			System.out.println("Creating document using http://news.yahoo.com/");
+			return createUrlDocument("http://news.yahoo.com/", "dictionary.csv", "stopwords.txt");
+		case 4:
+			System.out.println("Creating document using http://www.nytimes.com/");
+			return createUrlDocument("http://www.nytimes.com/", "dictionary.csv", "stopwords.txt");
+		}
+		return null;
+	}
+
 	public static Document createDocument() {
 		long before = System.currentTimeMillis();
 		Document doc = new FileDocument("WarAndPeace-LeoTolstoy.txt", "dictionary.csv", "stopwords.txt");
+		long after = System.currentTimeMillis();
+		System.out.println("Took " + (after - before) + " ms to create the document");
+		System.out.println();
+		return doc;
+	}
+
+	public static Document createUrlDocument(String url, String dictionary, String stopwords) {
+		long before = System.currentTimeMillis();
+		Document doc = new URLdocument(url, dictionary, stopwords);
+
 		long after = System.currentTimeMillis();
 		System.out.println("Took " + (after - before) + " ms to create the document");
 		System.out.println();

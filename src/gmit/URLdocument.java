@@ -3,6 +3,10 @@ package gmit;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,7 +14,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class FileDocument implements Document {
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+public class URLdocument implements Document {
 	private List<String> fileContents = new ArrayList<>();
 	// entire file in nested list format 1 String per page, a page consists of 40 lines
 	private Index index; // the document's index
@@ -20,49 +28,79 @@ public class FileDocument implements Document {
 	private String dictionaryPath;
 	private String ignoreWordsPath;
 
-
-
-	public FileDocument(String pathToFile, String pathToDictionary, String pathToIgnoreWords) {
-
-		filePath = pathToFile;
-		dictionaryPath = pathToDictionary;
-		ignoreWordsPath = pathToIgnoreWords;
+	public URLdocument(String inputUrl, String dictionary, String stopwords){ // create document from url
 
 		Dictionary d; // dictionary that will be used to create index
 		try {
-			d = new Dictionary(pathToDictionary); // creates dictionary from
-													// given path
+			d = new Dictionary(dictionary);
+			// creates dictionary from given path
 		} catch (IOException e) {
-			System.err.println("Warning: The document has a blank dictionary - check file '" + pathToDictionary + "'");
+			System.err.println("Warning: The document has a blank dictionary - check file ' " + dictionary + "'");
 			d = new Dictionary(); // use an empty one if there is a problem
 									// loading it from the file
 		}
 		Set<String> ignoreWords;
 		try {
-			ignoreWords = populateIgnoreWords(pathToIgnoreWords);
+			ignoreWords = populateIgnoreWords(stopwords);
 			// creates list of words to ignore
 		} catch (IOException e) {
-			System.err.println("Warning: The stoplist for the index is blank - check file '" + pathToIgnoreWords + "'");
-			ignoreWords = new HashSet<>(); // default to empty if there's a
-											// problem reading from the file
+			System.err.println("Warning: The stoplist for the index is blank - check file '" + stopwords + "'");
+			ignoreWords = new HashSet<>(); // default to empty if there's a problem reading from the file
 		}
 		try {
-			fillContents(pathToFile); // fill document contents from file
-		} catch (IOException e) {
-			System.err.println("Warning: There was an error reading from the e-book - check file '" + pathToFile + "'");
-			fileContents = new ArrayList<>();
-		} // if there's an error with one or more of the files
-		index = new MyIndex(d, ignoreWords, fileContents); // create index with
-															// dictionary,
-															// ignore words and
-															// fileContents
-	} // constructor
+			// Make a URL to the web page
+			URL url = new URL(inputUrl);
 
-	/*
-	 * This constructor deals with three files, with lengths n,m and k say i is
-	 * the time taken to create the index this constructor has a time complexity
-	 * of O(n + m + k + i)
-	 */
+			// Get the input stream through URL Connection
+			URLConnection connection = url.openConnection();
+			InputStream stream = connection.getInputStream();
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+			String line = null;
+			StringBuilder sb = new StringBuilder();
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+			}
+
+			// JSOUP stuff
+			org.jsoup.nodes.Document doc = Jsoup.parse(sb.toString());
+			// didn't know Document was a thing already until I found this!
+			Elements p = doc.getElementsByTag("p");
+			StringBuilder current = new StringBuilder();
+			for (Element individalParagraph : p) {
+
+				int length = individalParagraph.text().length();
+
+				if (length > 160) {
+					current.append(individalParagraph.text().substring(0, length / 4) + "\n");
+					current.append(individalParagraph.text().substring(length / 4, 2 * (length / 4)) + "\n");
+					current.append(individalParagraph.text().substring(2 * (length / 4), 3 * (length / 4)) + "\n");
+					current.append(individalParagraph.text().substring(3 * (length / 4)));
+
+				} else if (length > 120) {
+					current.append(individalParagraph.text().substring(0, (length / 3)) + "\n");
+					current.append(individalParagraph.text().substring(length / 3, 2 * (length / 3)) + "\n");
+					current.append(individalParagraph.text().substring(2 * (length / 3)));
+				} else if (length > 80) {
+					current.append(individalParagraph.text().substring(0, length / 3) + "\n");
+					current.append(individalParagraph.text().substring(length / 3, 2 * (length / 3)) + "\n");
+
+				} else {
+					current.append(individalParagraph.text());
+				}
+
+				fileContents.add(current.toString());
+				current = new StringBuilder();
+				// add up all paragraphs
+			}
+			
+		} catch (IOException e) {
+			System.out.println("There was an error creating the document from " + inputUrl);
+		}
+		index = new MyIndex(d, ignoreWords, fileContents);
+		// END JSOUP stuff
+
+	}
 
 	private Set<String> populateIgnoreWords(String pathToIgnoreWords) throws IOException {
 		Set<String> ignoreWords = new HashSet<>(); // start off empty
