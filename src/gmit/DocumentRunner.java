@@ -10,6 +10,12 @@ public class DocumentRunner {
 	public static Scanner console = new Scanner(System.in);
 
 	public static void main(String[] args) throws IOException {
+		
+		
+		Dictionary dictionary = new Dictionary("dictionary.csv"); // create the dictionary
+		
+		
+		/*
 		Document doc = createUrlDocument("http://www.nytimes.com/", "dictionary.csv", "stopwords.txt");
 		//Document doc = new FileDocument("WarAndPeace-LeoTolstoy.txt", "dictionary.csv", "stopwords.txt");
 		System.out.println("Using premade document - War and Peace");
@@ -152,7 +158,7 @@ public class DocumentRunner {
 				break;
 			}
 		} while (userChoice != -1);
-
+*/
 	} // main
 
 	public static String help() {

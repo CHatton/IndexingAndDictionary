@@ -20,8 +20,6 @@ public class FileDocument implements Document {
 	private String dictionaryPath;
 	private String ignoreWordsPath;
 
-
-
 	public FileDocument(String pathToFile, String pathToDictionary, String pathToIgnoreWords) {
 
 		filePath = pathToFile;
