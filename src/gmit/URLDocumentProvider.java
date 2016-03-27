@@ -1,11 +1,5 @@
 package gmit;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,24 +12,11 @@ public class URLDocumentProvider {
 	Document get(String inputUrl) {
 		List<String> fileContents = new ArrayList<>();
 		try {
-			// Make a URL to the web page
-			URL url = new URL(inputUrl);
-
-			// Get the input stream through URL Connection
-			URLConnection connection = url.openConnection();
-			InputStream stream = connection.getInputStream();
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-			String line = null;
-			StringBuilder sb = new StringBuilder();
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-			}
-
 			// JSOUP stuff
-			org.jsoup.nodes.Document doc = Jsoup.parse(sb.toString());
+			org.jsoup.nodes.Document doc = Jsoup.connect(inputUrl).get();
 			// gets document out of html
 			// didn't know Document was a thing already until I found this!
+
 			Elements p = doc.getElementsByTag("p"); // select all p tags
 			StringBuilder current = new StringBuilder();
 			for (Element individalParagraph : p) { // do this for every paragraph
@@ -54,7 +35,6 @@ public class URLDocumentProvider {
 				} else if (length > 80) {
 					current.append(individalParagraph.text().substring(0, length / 3) + "\n");
 					current.append(individalParagraph.text().substring(length / 3, 2 * (length / 3)) + "\n");
-
 				} else {
 					current.append(individalParagraph.text());
 				}
@@ -64,10 +44,12 @@ public class URLDocumentProvider {
 				// add up all paragraphs
 			}
 			// END JSOUP stuff
-		} catch (IOException e) {
+		} catch (Exception e) { // chose to catch all exceptions as there are many different
+			// exceptions that can happen when dealing with urls
 			System.out.println("There was an error creating the document from " + inputUrl);
+			fileContents = new ArrayList<>(); // give back empty array if there was an error
 		}
-		
+
 		ConcreteDocument d = new ConcreteDocument(fileContents);
 		d.setSource(inputUrl);
 		return d;

@@ -14,16 +14,13 @@ public class DocumentRunner {
 	public static RestrictedWords currentStopwords;
 
 	public static void main(String[] args) throws IOException {
-		defaultFile(); // creates default file document
-
 		int userChoice;
-
-		help();
+		defaultFile(); // creates default file document
+		help(); // prints initial list of options
 
 		do {
 			System.out.println("Enter choice: (19 for help)");
 			userChoice = console.nextInt();
-
 			switch (userChoice) {
 			case 1:
 				defaultFile();
@@ -109,7 +106,7 @@ public class DocumentRunner {
 		System.out.println(" 7) Print document information");
 		System.out.println(" 8) Print full document");
 		System.out.println(" 9) Print single page");
-		System.out.println(" 10) Print range of pages");
+		System.out.println("10) Print range of pages");
 		System.out.println("11) Print index of document");
 		System.out.println("12) Print page numbers of given word");
 		System.out.println("13) Print invalid words in document");
@@ -118,106 +115,158 @@ public class DocumentRunner {
 		System.out.println("15) Search for a word");
 		System.out.println("16) Search for a phrase (exact match)");
 		System.out.println("17) Search for a phrase (loose match)");
-		System.out.println("===== Demonstration =====\n");
+		System.out.println("===== Demonstration =====");
 		System.out.println("18) Calculate average document creation time (War and Peace)");
 		System.out.println("===== Help =====");
-		System.out.println("===== Document Creation =====\n");
 		System.out.println("19) Help");
 		System.out.println("20) Detailed Help");
-		System.out.println("===== Exit =====\n");
+		System.out.println("===== Exit =====");
 		System.out.println("-1) Exit\n");
 	}
 
 	public static void detailedHelp() {
 
 		System.out.println("===== Document Creation =====");
-		System.out.println(" 1) Use premade document");
+		System.out.println(" 1) Use premade file document");
 		System.out.println("This option creates a document using the following settings");
 		System.out.println("Book text: WarAndPeace-LeoTolstoy.txt");
 		System.out.println("Dictionary: dictionary.csv");
 		System.out.println("Stopwords: stopwords.txt");
-		System.out.println("Recommended for testing purposes.\n");
+		System.out.println("Recommended for testing purposes.");
 
-		
-		
-		System.out.println(" 2) Create custom document");
-		System.out.println("This option allows you to create a custom document");
-		System.out.println("Using your own settings. Make sure that all the files");
-		System.out.println("That you choose are in the correct folder.");
-		System.out.println("You will recieve a warning message if the document");
-		System.out.println("Was not created successfully.\n");
+		System.out.println();
+
+		System.out.println(" 2) User premade url document");
+		System.out.println("This option crates a document using the following settings");
+		System.out.println("Book text: http://www.huffingtonpost.co.uk/");
+		System.out.println("Dictionary: dictionary.csv");
+		System.out.println("Stopwords: stopwords.txt");
+
+		System.out.println();
+
+		System.out.println(" 3) Update dictionary");
+		System.out.println("This option allows you to change just the dictionary on its own");
+		System.out.println("It also re-creates the index with the new dictionary.");
+
+		System.out.println();
+
+		System.out.println(" 4) Update stopwords");
+		System.out.println("This option allows you to change just the stop words");
+		System.out.println("It also re-creates the index with the new stopwords.");
+
+		System.out.println();
+
+		System.out.println(" 5) Update document");
+		System.out.println("This option allows you to choose a new source for the text");
+		System.out.println("This can be from either a file path or a URL. The url must");
+		System.out.println("start with 'http'. If it's not a url, enter the full path of");
+		System.out.println("the file including the extension.");
+
+		System.out.println();
+
+		System.out.println(" 6) Create custom document");
+		System.out.println("This option combines options 3 - 5, allowing you to update");
+		System.out.println("Every aspect of the document.");
+
+		System.out.println();
 
 		System.out.println("===== Printing From Document =====");
-		System.out.println(" 3) Print document information");
+		System.out.println(" 7) Print document information");
 		System.out.println("This option prints all of the documents information");
-		System.out.println("including text file name, dictionary name, stopwords name,");
-		System.out.println("page count and word count of the current active document.\n");
+		System.out.println("including text source, dictionary size,");
+		System.out.println("page count and word count of the current active document.");
 
-		System.out.println(" 4) Print full document");
+		System.out.println();
+
+		System.out.println(" 8) Print full document");
 		System.out.println("This option simply prints out the entire contents");
-		System.out.println("of the document to the screen.\n");
+		System.out.println("of the document to the screen.");
 
-		System.out.println(" 5) Print single page");
+		System.out.println();
+
+		System.out.println(" 9) Print single page");
 		System.out.println("Prints out a single page, if the page entered is below 1");
 		System.out.println("or above the page count of the document, it will show you");
-		System.out.println("and error message.\n");
+		System.out.println("and error message.");
 
-		System.out.println(" 6) Print range of pages");
+		System.out.println();
+
+		System.out.println(" 10) Print range of pages");
 		System.out.println("This option will print out the pages between from (inclusive)");
-		System.out.println("and to (not inclusive) of the current document.\n");
+		System.out.println("and to (not inclusive) of the current document.");
 
-		System.out.println(" 7) Print index of document");
+		System.out.println();
+
+		System.out.println(" 11) Print index of document");
 		System.out.println("This option simply prints the entire contents of the index");
 		System.out.println("of the document to the screen. The index consists of words");
 		System.out.println("in the dictionary AND not in the stopwords list, and the page");
-		System.out.println("numbers each of the words appears on.\n");
+		System.out.println("numbers each of the words appears on.");
 
-		System.out.println(" 8) Print page numbers of given word");
+		System.out.println();
+
+		System.out.println(" 12) Print page numbers of given word");
 		System.out.println("This option prints all of the page numbers the given word");
-		System.out.println("appears on.\n");
+		System.out.println("appears on.");
 
-		System.out.println(" 9) Print invalid words in document");
+		System.out.println();
+
+		System.out.println(" 13) Print invalid words in document");
 		System.out.println("This option simple lists all of the words that were in the stopwords");
-		System.out.println("file.\n");
+		System.out.println("file.");
 
-		System.out.println("10) Print all pages with given word");
+		System.out.println();
+
+		System.out.println("14) Print all pages with given word");
 		System.out.println("This option will print every page that contains the word");
-		System.out.println("Entered by the user, if there are no words, it will recommend some.\n");
+		System.out.println("Entered by the user, if there are no words, it will recommend some.");
+
+		System.out.println();
 
 		System.out.println("===== Search the Document =====");
-		System.out.println("11) Search for a word");
+		System.out.println("15) Search for a word");
 		System.out.println("Allows the user to search for a word in the document, it that word");
 		System.out.println("appears in the document, it will print out all the information about that");
 		System.out.println("word. If it is not in the document, it will suggest a list of words that");
-		System.out.println("are in the document based on your search.\n");
+		System.out.println("are in the document based on your search.");
 
-		System.out.println("12) Search for phrase (exact match)");
+		System.out.println();
+
+		System.out.println("16) Search for phrase (exact match)");
 		System.out.println("This option takes a phrase and looks through the document to see");
-		System.out.println("if that phrase exists in the exact word order given.\n");
+		System.out.println("if that phrase exists in the exact word order given.");
 
-		System.out.println("13) Search for a phrase (loose match)");
+		System.out.println();
+
+		System.out.println("17) Search for a phrase (loose match)");
 		System.out.println("This option takes a phrase, and looks through the document to see");
 		System.out.println("if every word in the phrase appears on a page, and gives back a sorted");
-		System.out.println("list of pages it occurrs on.\n");
+		System.out.println("list of pages it occurrs on.");
 
-		System.out.println("===== Help =====");
-		System.out.println("14) Help");
-		System.out.println("Prints out a list of options available.\n");
-
-		System.out.println("15) Detailed Help");
-		System.out.println("Prints out more detailed information about each available option.\n");
+		System.out.println();
 
 		System.out.println("===== Demonstration =====");
-		System.out.println("16) Overlapping words between 2 documents");
-		System.out.println("Creates 2 documents, and gives back a set of the words that both");
-		System.out.println("documents contain.\n");
+		System.out.println("18) Calculate average document creation time (War and Peace)");
+		System.out.println("Creates the default document 50 times and gets the average time.");
 
-		System.out.println("17) Calculate average document creation time (War and Peace)");
-		System.out.println("Creates the default document 50 times and gets the average time.\n");
+		System.out.println();
+
+		System.out.println("===== Help =====");
+		System.out.println("19) Help");
+		System.out.println("Prints out a list of options available.");
+
+		System.out.println();
+
+		System.out.println("20) Detailed Help");
+		System.out.println("Prints out more detailed information about each available option.");
+
+		System.out.println();
 
 		System.out.println("===== Exit =====");
 		System.out.println("-1) Exit");
-		System.out.println("Quits the program.\n");
+		System.out.println("Quits the program.");
+
+		System.out.println();
 
 	}
 
@@ -268,16 +317,15 @@ public class DocumentRunner {
 	public static void printAllPagesWithWord() {
 		System.out.println("Print all pages with what word: ");
 		String word = console.next();
-		
-		if( currentIndex.pageNums(word).size() != 0){
+
+		if (currentIndex.pageNums(word).size() != 0) {
 			System.out.println(word + " appears on page(s) " + currentIndex.pageNums(word));
-			System.out.println(currentDoc.allPagesWith(word, currentIndex));
-		}else{
-			System.out.println(word +  " is not it the document, did you mean one of these?: ");
+			System.out.println(currentDoc.allGivenPages(currentIndex.pageNums(word)));
+		} else {
+			System.out.println(word + " is not it the document, did you mean one of these?: ");
 			System.out.println(currentIndex.didYouMean(word));
 		}
-		
-		
+
 	}
 
 	public static void printInvalidWords() {
@@ -289,12 +337,16 @@ public class DocumentRunner {
 	public static void printPagesOfGivenWord() {
 		System.out.println("Enter word: ");
 		String word = console.next();
+
+		List<Integer> pagesToPrint = currentIndex.pageNums(word);
+
 		if (currentIndex.pageNums(word).size() != 0) {
-			System.out.println(word + " appears on page(s): " + currentIndex.pageNums(word));
+			System.out.println(word + " appears on page(s): " + pagesToPrint);
 		} else { // it is 0, so recommend other words
 			System.out.println(word + " does not appear in the index, did you mean one of these?");
 			System.out.println(currentIndex.didYouMean(word));
 		}
+
 	}
 
 	public static void printIndex() {
@@ -323,14 +375,19 @@ public class DocumentRunner {
 		System.out.println("Document Source: " + currentDoc.getSource());
 		System.out.println("Word Count: " + currentIndex.getWordCount());
 		System.out.println("Page Count: " + currentDoc.pageCount());
+		System.out.println("Number of invalid words " + currentIndex.getInvalidWords().size());
+		System.out.println("Number of words in dictionary " + currentDictionary.getAllWords().size());
+		System.out.println();
 	}
 
 	public static void defaultFile() {
 		createFileDocument("WarAndPeace-LeoTolstoy.txt", "dictionary.csv", "stopwords.txt");
+		System.out.println();
 	}
 
 	public static void defaultURL() {
 		createUrlDocument("http://www.huffingtonpost.co.uk/", "dictionary.csv", "stopwords.txt");
+		System.out.println();
 	}
 
 	// creates the document and prints out the time it took to create it
@@ -381,12 +438,16 @@ public class DocumentRunner {
 		System.out.println("Enter new dictionary path. ");
 		String newPath = console.next();
 		currentDictionary = new Dictionary(newPath);
+		currentIndex = new MyIndex(currentDictionary, currentStopwords, currentDoc);
+		// also need to update the index
 	}
 
 	public static void updateStopwords() {
 		System.out.println("Enter new stopwords path. ");
 		String newPath = console.next();
 		currentStopwords = new RestrictedWords(newPath);
+		currentIndex = new MyIndex(currentDictionary, currentStopwords, currentDoc);
+		// also need to update the index
 	}
 
 	public static void updateDocument() {
@@ -399,7 +460,7 @@ public class DocumentRunner {
 			isFile = true;
 		}
 		currentDoc = (isFile ? new FileDocumentProvider().get(newPath) : new URLDocumentProvider().get(newPath));
-
+		currentIndex = new MyIndex(currentDictionary, currentStopwords, currentDoc); // also update the index
 	}
 
 	public static void updateEverything() {
@@ -413,10 +474,10 @@ public class DocumentRunner {
 		System.out.println("Calculating using War and Peace...");
 		for (int i = 0; i < numTimes; i++) {
 			long before = System.currentTimeMillis();
-			currentDictionary = new Dictionary("dictionary.csv");
-			currentDoc = new FileDocumentProvider().get("WarAndPeace-LeoTolstoy.txt");
-			currentStopwords = new RestrictedWords("stopwords.txt");
-			currentIndex = new MyIndex(currentDictionary, currentStopwords, currentDoc);
+			Dictionary d = new Dictionary("dictionary.csv");
+			Document doc = new FileDocumentProvider().get("WarAndPeace-LeoTolstoy.txt");
+			RestrictedWords r = new RestrictedWords("stopwords.txt");
+			new MyIndex(d, r, doc);
 			long after = System.currentTimeMillis();
 			totalTime += (after - before);
 		}

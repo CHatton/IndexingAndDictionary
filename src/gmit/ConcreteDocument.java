@@ -16,11 +16,11 @@ public class ConcreteDocument implements Document {
 		this.fileContents = fileContents;
 	} // constructor
 
-	public void setSource(String source){
+	public void setSource(String source) {
 		this.source = source;
 	}
-	
-	public String getSource(){
+
+	public String getSource() {
 		return source;
 	}
 
@@ -51,9 +51,8 @@ public class ConcreteDocument implements Document {
 		} else { // valid page number
 			sb.append("PAGE: " + page + "\n");
 			sb.append("========================================================================\n");
-			sb.append(fileContents.get(page - 1) + "\n"); // page -1 so user
-															// enters 1 for
-															// index 0 etc
+			sb.append(fileContents.get(page - 1) + "\n");
+			// page -1 so user enters 1 for index 0 etc
 			sb.append("========================================================================\n");
 		}
 		return sb.toString();
@@ -76,7 +75,6 @@ public class ConcreteDocument implements Document {
 	/*
 	 * O(n) time complexity where n is the number of pages between from and to
 	 */
-
 
 	@Override
 	public List<Integer> loosePhraseSearch(String phrase, Index index) {
@@ -130,7 +128,7 @@ public class ConcreteDocument implements Document {
 	}
 
 	@Override
-	public List<Integer> exactPhraseSearch(String phrase,Index index) {
+	public List<Integer> exactPhraseSearch(String phrase, Index index) {
 
 		// if it's on list of restricted words, ignore it
 		List<Integer> pagesItAppearsOn = new ArrayList<>();
@@ -145,8 +143,8 @@ public class ConcreteDocument implements Document {
 		}
 
 		List<Integer> pagesToSearch; // this will be all the pages we need to
-									// search,
-									// either all of them, or the lowest possible number of pages
+										// search,
+										// either all of them, or the lowest possible number of pages
 
 		if (validWords.size() == 0) { // no valid words
 			List<Integer> allPages = new ArrayList<>();
@@ -192,16 +190,15 @@ public class ConcreteDocument implements Document {
 		 */
 	}
 
-
 	@Override
 	public List<String> allPages() {
 		return fileContents;
 	}
 
 	@Override
-	public String allPagesWith(String word, Index index) {
-		StringBuilder sb = new StringBuilder();	
-		for(Integer n : index.pageNums(word)){
+	public String allGivenPages(List<Integer> pages) {
+		StringBuilder sb = new StringBuilder();
+		for (Integer n : pages) {
 			sb.append(singlePage(n));
 		}
 		return sb.toString();

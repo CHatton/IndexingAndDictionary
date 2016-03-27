@@ -13,8 +13,6 @@ public interface Document {
 
 	String singlePage(int page);// prints a single page from the document
 
-	String allPagesWith(String word,Index index); // prints all pages with that word
-
 	List<Integer> exactPhraseSearch(String phrase, Index index); 
 	// returns the pages at which that phrase is found, empty list if it isn't there
 
@@ -22,6 +20,8 @@ public interface Document {
 	// returns the pages at which the given words appear
 		
 	String getSource(); // gives back the path to file or url depending on implementation
+	
+	String allGivenPages(List<Integer> pages);
 }
 
 /*
