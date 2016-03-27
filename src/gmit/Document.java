@@ -1,7 +1,6 @@
 package gmit;
 
 import java.util.List;
-import java.util.Set;
 
 public interface Document {
 	int pageCount();// gives the number of pages in the document
@@ -9,35 +8,20 @@ public interface Document {
 	String pageRange(int from, int to);
 
 	String fullDocument();// prints the full document
-
-	List<Integer> pageNums(String word);// gives back the list of page the word is on
-
-	boolean contains(String word);// says whether or not the word exists in the document
-
-	int wordCount();// gives back the total unique word count of the document
+	
+	List<String> allPages();
 
 	String singlePage(int page);// prints a single page from the document
 
-	String getIndex();// print out the index
+	String allPagesWith(String word,Index index); // prints all pages with that word
 
-	List<String> getDefinitions(String word); // gives back the definitions for a given word if it's in the document's index
-
-	String allPagesWith(String word); // prints all pages with that word
-
-	List<Integer> pageNumbersFor(String word); // give back all the page numbers that word appears on
-
-	List<String> getInvalidWords(); // gives back list of words that were either not on the dictionary, or on the stop words list
-
-	List<String> didYouMean(String word); // list of words using simple recommendation system
-
-	List<Integer> exactPhraseSearch(String phrase); 
+	List<Integer> exactPhraseSearch(String phrase, Index index); 
 	// returns the pages at which that phrase is found, empty list if it isn't there
 
-	List<Integer> loosePhraseSearch(String phrase); 
+	List<Integer> loosePhraseSearch(String phrase, Index index); 
 	// returns the pages at which the given words appear
-
-	Set<String> overlappingWords(Document other);
-	// takes another document, and gives a list of words that are in both the indexes
+		
+	String getSource(); // gives back the path to file or url depending on implementation
 }
 
 /*

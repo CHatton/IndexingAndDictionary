@@ -10,15 +10,15 @@ import java.util.Set;
 
 public class MyIndex implements Index {
 	private Set<String> invalidWords = new HashSet<>(); // words that weren't in dictionary and/or were in ignoreWords
-	private Set<String> ignoreWords = new HashSet<>(); // words that should NOT be included in the index
+	private RestrictedWords ignoreWords; // words that should NOT be included in the index
 	private Dictionary dictionary; // dictionary used to create the index
 	private Map<String, Set<Integer>> index = new HashMap<>(); // a list of words to list of pages they are on
 	private int wordCount = 0; // number of words in the document
 
-	public MyIndex(Dictionary dictionary, Set<String> ignoreWords, List<String> fileContents) {
+	public MyIndex(Dictionary dictionary, RestrictedWords ignoreWords, Document doc) {
 		this.dictionary = dictionary;
 		this.ignoreWords = ignoreWords;
-		generateIndex(fileContents); // each String is a page
+		generateIndex(doc.allPages()); // each String is a page
 	}
 
 	private void generateIndex(List<String> fileContents) {
@@ -77,11 +77,14 @@ public class MyIndex implements Index {
 	}
 
 	@Override
-	public Set<Integer> pageNums(String word) {
+	public List<Integer> pageNums(String word) {
+		word = word.toUpperCase();
 		if (index.get(word) == null) {
-			return new HashSet<>(); // empty set, ie word doesn't appear on any page
+			return new ArrayList<>(); // empty set, ie word doesn't appear on any page
 		} else {
-			return index.get(word); // return a list of integers indicating page numbers the word can be found
+			List<Integer> pages = new ArrayList<>(index.get(word));
+			Collections.sort(pages);
+			return pages; // return a list of integers indicating page numbers the word can be found
 		}
 		// constant time
 	}
