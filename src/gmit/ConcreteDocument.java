@@ -9,20 +9,20 @@ import java.util.Set;
 
 public class ConcreteDocument implements Document {
 	private List<String> fileContents = new ArrayList<>();
-	// entire file in nested list format 1 String per page, a page consists of 40 lines
-	private String source;
+	// entire file in list format 1 page is one string, a page consists of 40 lines
+	private String source; // where the file came from, e.g. a URL/file 
 
-	public ConcreteDocument(List<String> fileContents) {
+	public ConcreteDocument(List<String> fileContents, String source) {
 		this.fileContents = fileContents;
-	} // constructor
-
-	public void setSource(String source) {
 		this.source = source;
-	}
-
-	public String getSource() {
-		return source;
-	}
+	} // constructor
+	/*
+	 * this constructor simply takes an array of strings
+	 * the array of strings is made in different ways
+	 * by the two different providers I've created,
+	 * it also takes a source, indicating where the 
+	 * document came from
+	 */
 
 	@Override
 	public int pageCount() {
@@ -51,8 +51,7 @@ public class ConcreteDocument implements Document {
 		} else { // valid page number
 			sb.append("PAGE: " + page + "\n");
 			sb.append("========================================================================\n");
-			sb.append(fileContents.get(page - 1) + "\n");
-			// page -1 so user enters 1 for index 0 etc
+			sb.append(fileContents.get(page - 1) + "\n"); // page -1 so user enters 1 for index 0 etc
 			sb.append("========================================================================\n");
 		}
 		return sb.toString();
@@ -72,45 +71,51 @@ public class ConcreteDocument implements Document {
 		return sb.toString();
 	}
 
-	/*
-	 * O(n) time complexity where n is the number of pages between from and to
-	 */
+	// O(n) time complexity where n is the number of pages between from and to
 
 	@Override
 	public List<Integer> loosePhraseSearch(String phrase, Index index) {
 		List<Integer> pagesItAppearsOn = new ArrayList<>();
+		// keep a list of the different pages that satisfy the condition
 		List<String> validWords = new ArrayList<>();
+		// keep a list of all the words in the phrase that are in the index
 		phrase = phrase.trim();
-		String[] words = phrase.split(" ");
+		String[] words = phrase.split(" "); // separate out the words in the phrase
 		for (int i = 0; i < words.length; i++) {
 			if (index.contains(words[i])) {
-				validWords.add(words[i]); // add valid words to the ones to
-											// check
+				validWords.add(words[i]);
+				// add valid words to the ones to check
 			}
 		}
+
 		List<Integer> pagesToSearch;
+
 		if (validWords.size() == 0) {
 			// need to search every page, worst case
 			List<Integer> allPages = new ArrayList<>();
 			for (int i = 0; i < fileContents.size(); i++) {
 				allPages.add(i + 1); // add all pages
 			}
-			pagesToSearch = new ArrayList<>(allPages);
+			pagesToSearch = allPages; // need to search all the pages in the document
 		} else {
 			// there are valid words, pick the rarest one and search those pages
 			String rarestWord = ""; // just a default value
-			int rarestCount = Integer.MAX_VALUE; // guarantee we'll have a
-													// smaller size
+			int rarestCount = Integer.MAX_VALUE;
+			// guarantee we'll have a smaller size
 			for (String word : validWords) {
 				if (index.pageNums(word.toUpperCase()).size() < rarestCount) {
-					rarestWord = word; // find the word with the least number of
-										// occurrences
-										// means least number of pages to search
+					rarestWord = word;
+					// find the word with the least number of occurrences means least number of pages to search
 				}
 			}
 			pagesToSearch = index.pageNums(rarestWord.toUpperCase());
 			// search only pages containing a valid word
 		}
+		/*
+		 * This is a worst case scenario of O(n) complexity,
+		 * every page in the document must be checked for
+		 * a phrase match
+		 */
 
 		for (Integer page : pagesToSearch) {
 			String[] currentPage = fileContents.get(page - 1).toUpperCase().split(" ");
@@ -137,14 +142,14 @@ public class ConcreteDocument implements Document {
 		String[] words = phrase.split(" ");
 		for (int i = 0; i < words.length; i++) {
 			if (index.contains(words[i])) {
-				validWords.add(words[i]); // add valid words to the ones to
-											// check
+				validWords.add(words[i]); 
+				// add valid words to the ones to check
 			}
 		}
 
-		List<Integer> pagesToSearch; // this will be all the pages we need to
-										// search,
-										// either all of them, or the lowest possible number of pages
+		List<Integer> pagesToSearch;
+		// this will be all the pages we need to search, either all of them,
+		// or the lowest possible number of pages
 
 		if (validWords.size() == 0) { // no valid words
 			List<Integer> allPages = new ArrayList<>();
@@ -159,9 +164,9 @@ public class ConcreteDocument implements Document {
 													// smaller size
 			for (String word : validWords) {
 				if (index.pageNums(word.toUpperCase()).size() < rarestCount) {
-					rarestWord = word; // find the word with the least number of
-										// occurrences
-										// means least number of pages to search
+					rarestWord = word;
+					// find the word with the least number of
+					// occurrences means least number of pages to search
 				}
 			}
 
@@ -201,6 +206,16 @@ public class ConcreteDocument implements Document {
 		for (Integer n : pages) {
 			sb.append(singlePage(n));
 		}
+		return sb.toString();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Document Source: " + source + "\n");
+		sb.append("Page Count: " + pageCount() + "\n");
+
 		return sb.toString();
 	}
 

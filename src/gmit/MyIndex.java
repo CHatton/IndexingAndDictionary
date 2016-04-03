@@ -2,23 +2,23 @@ package gmit;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class MyIndex implements Index {
 	private Set<String> invalidWords = new HashSet<>(); // words that weren't in dictionary and/or were in ignoreWords
 	private RestrictedWords ignoreWords; // words that should NOT be included in the index
 	private Dictionary dictionary; // dictionary used to create the index
-	private Map<String, Set<Integer>> index = new HashMap<>(); // a list of words to list of pages they are on
+	private Map<String, Set<Integer>> index = new TreeMap<>(); // a list of words to list of pages they are on ORDERED
 	private int wordCount = 0; // number of words in the document
 
 	public MyIndex(Dictionary dictionary, RestrictedWords ignoreWords, Document doc) {
 		this.dictionary = dictionary;
 		this.ignoreWords = ignoreWords;
-		generateIndex(doc.allPages()); // each String is a page
+		generateIndex(doc.allPages()); // each String is a page or a paragraph for URL doc
 	}
 
 	private void generateIndex(List<String> fileContents) {
@@ -58,7 +58,7 @@ public class MyIndex implements Index {
 		 * Generating the index is an O(n) operation, each line of the document
 		 * is processed and constant time operations such as adding to various
 		 * maps are performed. Only a single pass is needed to generate the
-		 * index which no words being revisted.
+		 * index which no words being revisited.
 		 */
 	} // generate index
 
@@ -103,13 +103,16 @@ public class MyIndex implements Index {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		ArrayList<Integer> list;
-		for (Map.Entry<String, Set<Integer>> entry : index.entrySet()) {
-			list = new ArrayList<Integer>(entry.getValue());
-			Collections.sort(list); // display sorted order of pages instead of random order
+		Set<String> set = index.keySet();
+
+		for (String s : set) {
+			list = new ArrayList<Integer>(index.get(s));
+			Collections.sort(list);
 			// iterate through the index giving information about each entry
 			sb.append("================================================================================\n");
-			sb.append("WORD: " + entry.getKey() + "\nDEFINITIONS: " + dictionary.getDetail(entry.getKey()) + "\nPAGES: "
-					+ list + "\n\n");
+			sb.append("WORD: '" + s + "'\nDEFINITIONS: \n" + printList(dictionary.getDefinitions(s)) + "OCCURENCES: "
+					+ list.size() + "\nPAGES: " + list + "\n\n");
+
 		}
 		return sb.toString();
 		/*
@@ -120,10 +123,24 @@ public class MyIndex implements Index {
 		 */
 	}
 
+	private String printList(List<String> list) {
+		StringBuilder sb = new StringBuilder("\n");
+		for (String s : list) {
+			sb.append(s + " \n");
+		}
+		return sb.toString();
+	}
+	/*
+	 * I creating this printList method instead of using
+	 * the default toString for a list as I wanted to space
+	 * everything out a bit more and didn't want all the brackets
+	 * and commas associated with the default.
+	 */
+
 	@Override
 	public List<String> getDefinitions(String word) {
 		if (index.containsKey(word.toUpperCase())) { // word is in index
-			return dictionary.getDetail(word.toUpperCase());
+			return dictionary.getDefinitions(word.toUpperCase());
 		} else { // word not in index
 			return new ArrayList<String>();
 		}
@@ -140,9 +157,11 @@ public class MyIndex implements Index {
 	public List<String> didYouMean(String word) {
 		// given a word, give a list of words that are close to the one searched for
 		List<String> wordsToReccommend = new ArrayList<>();
-		for (Map.Entry<String, Set<Integer>> entry : index.entrySet()) {
-			if (closeMatch(word.toUpperCase(), entry.getKey())) {
-				wordsToReccommend.add(entry.getKey());
+		Set<String> set = index.keySet();
+
+		for (String s : set) {
+			if (closeMatch(word.toUpperCase(), s)) {
+				wordsToReccommend.add(s);
 			}
 		}
 		/*
@@ -195,12 +214,6 @@ public class MyIndex implements Index {
 		/* mainly just to give plurals and vica versa if the other isn't in the index
 		eg senses is not in, but sense is, continues not in, but continue is. Main intended purpose of this functionality
 		also helps with small typos, stuff like that */
-	}
-
-	@Override
-	public Set<String> getKeys() {
-		return dictionary.getAllWords();
-		// constant time
 	}
 
 }

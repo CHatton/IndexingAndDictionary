@@ -38,6 +38,8 @@ public class URLDocumentProvider {
 				} else {
 					current.append(individalParagraph.text());
 				}
+				// just here to split up the longer paragraphs, not a perfect solution, but I just
+				// wanted the user to be able to see the full paragraph
 
 				fileContents.add(current.toString());
 				current = new StringBuilder(); // reset contents
@@ -46,13 +48,19 @@ public class URLDocumentProvider {
 			// END JSOUP stuff
 		} catch (Exception e) { // chose to catch all exceptions as there are many different
 			// exceptions that can happen when dealing with urls
-			System.out.println("There was an error creating the document from " + inputUrl);
+			System.err.println("There was an error creating the document from " + inputUrl);
+			inputUrl = "Error creating.";
 			fileContents = new ArrayList<>(); // give back empty array if there was an error
 		}
 
-		ConcreteDocument d = new ConcreteDocument(fileContents);
-		d.setSource(inputUrl);
-		return d;
+		return new ConcreteDocument(fileContents, inputUrl);
+
+		/*
+		 * time complexity of O(n + m) where n is the size
+		 * of all the paragraphs being dealt with and m
+		 * is the time take from creating the document
+		 * from the url
+		 */
 	}
 
 }

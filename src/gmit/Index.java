@@ -17,9 +17,10 @@ public interface Index {
 
 	List<String> getDefinitions(String word); // give all the definitions for a given word
 	
-	Set<String> getInvalidWords();
+	Set<String> getInvalidWords(); 
+	// give back the words that were IN stop words or were NOT in dictionary
 	
 	List<String> didYouMean(String word);
-	
-	Set<String> getKeys();
+	// give back a list of recommended words based on a given word
+
 }

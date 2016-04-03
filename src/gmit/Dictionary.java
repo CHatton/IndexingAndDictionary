@@ -58,7 +58,7 @@ public class Dictionary {
 	}
 
 	private void addToDictionary(String wordToAdd, String definitions) {
-		if (dictionary.get(wordToAdd) == null) {
+		if (!dictionary.containsKey(wordToAdd)) {
 			List<String> newList = new ArrayList<>(); // make a new list because the word doesn't exist yet
 			newList.add(definitions); // add the definition to the list
 			dictionary.put(wordToAdd, newList); // put it in the dictionary
@@ -80,13 +80,13 @@ public class Dictionary {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("The dictionary contains " + dictionary.size() + " words.");
-		return sb.toString();
+		return "The dictionary contains " + dictionary.size() + " words.\n";
 	}
 
-	public List<String> getDetail(String word) {
-		return dictionary.get(word);
+	// accessing the size is a constant time operation
+
+	public List<String> getDefinitions(String word) {
+		return dictionary.get(word); // constant time
 	}
 
 	public Set<String> getAllWords() {

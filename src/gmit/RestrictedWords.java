@@ -23,6 +23,7 @@ public class RestrictedWords {
 	
 	public boolean contains(String word) {
 		return stopWords.contains(word.toUpperCase());
+		// constant time operation
 		// all that's needed is knowing if someting is it it
 	}
 

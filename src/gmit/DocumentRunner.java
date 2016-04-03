@@ -1,7 +1,9 @@
 package gmit;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,14 +15,20 @@ public class DocumentRunner {
 	public static Index currentIndex;
 	public static RestrictedWords currentStopwords;
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		int userChoice;
 		defaultFile(); // creates default file document
 		help(); // prints initial list of options
 
 		do {
-			System.out.println("Enter choice: (19 for help)");
-			userChoice = console.nextInt();
+			System.out.println("Enter choice: (20 for help)");
+			try {
+				userChoice = console.nextInt();
+			} catch (InputMismatchException e) {
+				userChoice = -2; // so it hits default
+				console.nextLine(); // flush buffer
+			}
+
 			switch (userChoice) {
 			case 1:
 				defaultFile();
@@ -65,33 +73,51 @@ public class DocumentRunner {
 				printAllPagesWithWord();
 				break;
 			case 15:
-				searchForWord();
+				printIndexToFile();
 				break;
 			case 16:
-				searchForExactMatch();
+				searchForWord();
 				break;
 			case 17:
-				searchForLooseMatch();
+				searchForExactMatch();
 				break;
 			case 18:
-				calculateAverageCreationTime();
+				searchForLooseMatch();
 				break;
 			case 19:
-				help();
+				calculateAverageCreationTime();
 				break;
 			case 20:
+				help();
+				break;
+			case 21:
 				detailedHelp();
 				break;
 			case -1:
 				System.out.println("Goodbye!");
 				break;
 			default:
-				System.out.println("Invalid option (14 for help)");
+				System.out.println("Invalid option (20 for help)");
 				break;
 			}
 
 		} while (userChoice != -1);
 	} // main
+
+	public static void printIndexToFile() {
+
+		System.out.println("Enter file to print to: ");
+		String fileName = console.next();
+		PrintWriter p;
+		try {
+			p = new PrintWriter(fileName);
+			p.println(currentIndex);
+			p.close();
+		} catch (IOException e) {
+			System.out.println("There was an error creating " + fileName);
+		}
+
+	}
 
 	public static void help() {
 		// prints out the options available to the user
@@ -111,15 +137,16 @@ public class DocumentRunner {
 		System.out.println("12) Print page numbers of given word");
 		System.out.println("13) Print invalid words in document");
 		System.out.println("14) Print all pages with given word");
+		System.out.println("15) Print index to file.");
 		System.out.println("===== Search the Document =====");
-		System.out.println("15) Search for a word");
-		System.out.println("16) Search for a phrase (exact match)");
-		System.out.println("17) Search for a phrase (loose match)");
+		System.out.println("16) Search for a word");
+		System.out.println("17) Search for a phrase (exact match)");
+		System.out.println("18) Search for a phrase (loose match)");
 		System.out.println("===== Demonstration =====");
-		System.out.println("18) Calculate average document creation time (War and Peace)");
+		System.out.println("19) Calculate average document creation time (War and Peace)");
 		System.out.println("===== Help =====");
-		System.out.println("19) Help");
-		System.out.println("20) Detailed Help");
+		System.out.println("20) Help");
+		System.out.println("21) Detailed Help");
 		System.out.println("===== Exit =====");
 		System.out.println("-1) Exit\n");
 	}
@@ -223,8 +250,12 @@ public class DocumentRunner {
 
 		System.out.println();
 
+		System.out.println("15) Print the index of the document to a named file.");
+
+		System.out.println();
+
 		System.out.println("===== Search the Document =====");
-		System.out.println("15) Search for a word");
+		System.out.println("16) Search for a word");
 		System.out.println("Allows the user to search for a word in the document, it that word");
 		System.out.println("appears in the document, it will print out all the information about that");
 		System.out.println("word. If it is not in the document, it will suggest a list of words that");
@@ -232,13 +263,13 @@ public class DocumentRunner {
 
 		System.out.println();
 
-		System.out.println("16) Search for phrase (exact match)");
+		System.out.println("17) Search for phrase (exact match)");
 		System.out.println("This option takes a phrase and looks through the document to see");
 		System.out.println("if that phrase exists in the exact word order given.");
 
 		System.out.println();
 
-		System.out.println("17) Search for a phrase (loose match)");
+		System.out.println("18) Search for a phrase (loose match)");
 		System.out.println("This option takes a phrase, and looks through the document to see");
 		System.out.println("if every word in the phrase appears on a page, and gives back a sorted");
 		System.out.println("list of pages it occurrs on.");
@@ -246,18 +277,18 @@ public class DocumentRunner {
 		System.out.println();
 
 		System.out.println("===== Demonstration =====");
-		System.out.println("18) Calculate average document creation time (War and Peace)");
+		System.out.println("19) Calculate average document creation time (War and Peace)");
 		System.out.println("Creates the default document 50 times and gets the average time.");
 
 		System.out.println();
 
 		System.out.println("===== Help =====");
-		System.out.println("19) Help");
+		System.out.println("20) Help");
 		System.out.println("Prints out a list of options available.");
 
 		System.out.println();
 
-		System.out.println("20) Detailed Help");
+		System.out.println("21) Detailed Help");
 		System.out.println("Prints out more detailed information about each available option.");
 
 		System.out.println();
@@ -298,7 +329,6 @@ public class DocumentRunner {
 		} else {
 			System.out.println("That phrase isn't in the document!");
 		}
-
 	}
 
 	public static void searchForWord() {
@@ -306,8 +336,9 @@ public class DocumentRunner {
 		String searchWord = console.next();
 
 		if (currentIndex.contains(searchWord)) {
-			System.out.println(searchWord + " appears on pages: " + currentIndex.pageNums(searchWord));
-			System.out.println(currentIndex.getDefinitions(searchWord));
+			System.out.println(searchWord + " appears " + currentIndex.getDefinitions(searchWord).size() + " times.");
+			System.out.println("Appears on pages: " + currentIndex.pageNums(searchWord));
+			System.out.println(printList(currentIndex.getDefinitions(searchWord)));
 		} else {
 			System.out.println("Sorry " + searchWord + " isn't in the index, did you mean one of these?: ");
 			System.out.println(currentIndex.didYouMean(searchWord));
@@ -325,7 +356,6 @@ public class DocumentRunner {
 			System.out.println(word + " is not it the document, did you mean one of these?: ");
 			System.out.println(currentIndex.didYouMean(word));
 		}
-
 	}
 
 	public static void printInvalidWords() {
@@ -346,7 +376,6 @@ public class DocumentRunner {
 			System.out.println(word + " does not appear in the index, did you mean one of these?");
 			System.out.println(currentIndex.didYouMean(word));
 		}
-
 	}
 
 	public static void printIndex() {
@@ -354,16 +383,38 @@ public class DocumentRunner {
 	}
 
 	public static void printPageRange() {
+		System.out.println("Pages: 1 - " + currentDoc.allPages().size() +": ");
+		int from, to;
 		System.out.print("From Page: ");
-		int from = console.nextInt();
+		try {
+			from = console.nextInt();
+		} catch (InputMismatchException e) {
+			from = 0;
+			console.nextLine();
+		}
 		System.out.print("To Page: ");
-		int to = console.nextInt();
+		try {
+			to = console.nextInt();
+		} catch (InputMismatchException e) {
+			to = 0;
+			console.nextLine();
+		}
+
 		System.out.println(currentDoc.pageRange(from, to));
 	}
 
 	public static void printSinglePage() {
-		System.out.print("Print Which Page: ");
-		int page = console.nextInt();
+		System.out.print("Print Which Page: 1 - " + currentDoc.allPages().size() + ": ");
+		int page;
+
+		try {
+			page = console.nextInt();
+		} catch (InputMismatchException e) {
+			page = 0;
+			console.nextLine();
+		}
+
+		System.out.println();
 		System.out.println(currentDoc.singlePage(page));
 	}
 
@@ -372,11 +423,10 @@ public class DocumentRunner {
 	}
 
 	public static void printDocumentInfo() {
-		System.out.println("Document Source: " + currentDoc.getSource());
+		System.out.print(currentDoc);
 		System.out.println("Word Count: " + currentIndex.getWordCount());
-		System.out.println("Page Count: " + currentDoc.pageCount());
 		System.out.println("Number of invalid words " + currentIndex.getInvalidWords().size());
-		System.out.println("Number of words in dictionary " + currentDictionary.getAllWords().size());
+		System.out.print(currentDictionary);
 		System.out.println();
 	}
 
@@ -452,7 +502,9 @@ public class DocumentRunner {
 
 	public static void updateDocument() {
 		System.out.println("Enter new file path or URL. (make sure URL starts with 'http')");
+
 		String newPath = console.next();
+
 		boolean isFile;
 		if (newPath.length() > 4 && newPath.substring(0, 4).equalsIgnoreCase("http")) {
 			isFile = false; // is url
@@ -489,6 +541,14 @@ public class DocumentRunner {
 		for (String s : col) {
 			System.out.println(s);
 		}
+	}
+
+	public static String printList(List<String> list) {
+		StringBuilder sb = new StringBuilder("\n");
+		for (String s : list) {
+			sb.append(s + " \n");
+		}
+		return sb.toString();
 	}
 
 }
